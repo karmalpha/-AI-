@@ -1,0 +1,2511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI酒馆 · 万界跑团台</title>
+    <style>
+        /* ===== CSS Variables & Theme Engine ===== */
+        :root {
+            /* 默认主题: 西幻风 */
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #1f2a4a;
+            --bg-input: #2a3a5a;
+            --text-primary: #e8e0d0;
+            --text-secondary: #b8b0a0;
+            --text-muted: #887e70;
+            --border-color: #3a4a6a;
+            --accent: #c9a84c;
+            --accent-glow: rgba(201, 168, 76, 0.3);
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --radius: 12px;
+            --font-family: 'Georgia', 'Times New Roman', serif;
+            --transition: 0.3s ease;
+            --scrollbar-track: #1a1a2e;
+            --scrollbar-thumb: #3a4a6a;
+            --header-bg: rgba(26, 26, 46, 0.92);
+            --card-hover: rgba(201, 168, 76, 0.08);
+            --glow-text: #f0e6c0;
+            --sepia: 0;
+            --contrast: 1;
+        }
+
+        /* ===== 日间模式 ===== */
+        [data-theme="light"] {
+            --bg-primary: #f5efe8;
+            --bg-secondary: #e8dfd4;
+            --bg-card: #faf6f0;
+            --bg-input: #ede6dc;
+            --text-primary: #3a3228;
+            --text-secondary: #5a5248;
+            --text-muted: #8a8278;
+            --border-color: #c8beb0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+            --header-bg: rgba(245, 239, 232, 0.92);
+            --scrollbar-track: #f5efe8;
+            --scrollbar-thumb: #c8beb0;
+            --card-hover: rgba(201, 168, 76, 0.15);
+            --glow-text: #3a3228;
+        }
+
+        /* ===== 12+ 风格主题 ===== */
+        /* 1. 手绘风 */
+        [data-style="sketch"] {
+            --font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+            --bg-primary: #fcf8f0;
+            --bg-secondary: #f5efe4;
+            --bg-card: #fffcf5;
+            --bg-input: #f5efe4;
+            --text-primary: #3a3228;
+            --text-secondary: #5a5248;
+            --border-color: #c8beb0;
+            --radius: 0px;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --accent: #8a7a5a;
+            --accent-glow: rgba(138, 122, 90, 0.2);
+        }
+        [data-style="sketch"] * {
+            border-style: dashed !important;
+        }
+
+        /* 2. 水墨国风 */
+        [data-style="ink"] {
+            --font-family: 'STKaiti', 'KaiTi', '楷体', serif;
+            --bg-primary: #f5f0e8;
+            --bg-secondary: #e8e0d4;
+            --bg-card: #faf6ee;
+            --bg-input: #ede4d8;
+            --text-primary: #2a2218;
+            --text-secondary: #4a4238;
+            --border-color: #8a7a6a;
+            --radius: 4px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
+            --accent: #6a5a4a;
+            --accent-glow: rgba(106, 90, 74, 0.15);
+            --sepia: 0.3;
+        }
+        [data-style="ink"] .card {
+            border: 2px solid #8a7a6a;
+            background-image: radial-gradient(circle at 20% 30%, rgba(200, 180, 160, 0.1) 0%, transparent 60%);
+        }
+
+        /* 3. 赛博朋克 */
+        [data-style="cyber"] {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #12122a;
+            --bg-card: #1a1a3a;
+            --bg-input: #22224a;
+            --text-primary: #00f0ff;
+            --text-secondary: #80d0ff;
+            --text-muted: #406080;
+            --border-color: #00f0ff;
+            --accent: #ff00aa;
+            --accent-glow: rgba(255, 0, 170, 0.3);
+            --font-family: 'Courier New', monospace;
+            --shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+            --glow-text: #00f0ff;
+        }
+        [data-style="cyber"] .card {
+            border: 1px solid #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.05), inset 0 0 20px rgba(0, 240, 255, 0.02);
+        }
+        [data-style="cyber"] button {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid #00f0ff;
+            background: transparent;
+            color: #00f0ff;
+        }
+        [data-style="cyber"] button:hover {
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        /* 4. 波普艺术 */
+        [data-style="pop"] {
+            --bg-primary: #ffeedd;
+            --bg-secondary: #ffddaa;
+            --bg-card: #ffffee;
+            --bg-input: #ffeedd;
+            --text-primary: #222;
+            --text-secondary: #555;
+            --border-color: #ff6600;
+            --accent: #ff3366;
+            --accent-glow: rgba(255, 51, 102, 0.3);
+            --font-family: 'Impact', 'Arial Black', sans-serif;
+            --radius: 0px;
+            --shadow: 8px 8px 0 rgba(0, 0, 0, 0.15);
+        }
+        [data-style="pop"] .card {
+            border: 3px solid #222;
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.1);
+        }
+        [data-style="pop"] button {
+            border: 3px solid #222;
+            background: #ff3366;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* 5. 像素风 */
+        [data-style="pixel"] {
+            --font-family: 'Press Start 2P', 'Courier New', monospace;
+            --bg-primary: #2a2a2a;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #3a3a3a;
+            --bg-input: #4a4a4a;
+            --text-primary: #aaffaa;
+            --text-secondary: #88dd88;
+            --border-color: #66aa66;
+            --accent: #aaffaa;
+            --radius: 0px;
+            --shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+            --contrast: 1.2;
+        }
+        [data-style="pixel"] .card {
+            border: 4px solid #66aa66;
+            image-rendering: pixelated;
+        }
+        [data-style="pixel"] button {
+            border: 4px solid #66aa66;
+            background: #2a2a2a;
+            color: #aaffaa;
+            font-family: inherit;
+        }
+
+        /* 6. 夜店风 */
+        [data-style="club"] {
+            --bg-primary: #0a0015;
+            --bg-secondary: #150020;
+            --bg-card: #1a002a;
+            --bg-input: #2a0040;
+            --text-primary: #ff66ff;
+            --text-secondary: #cc66cc;
+            --text-muted: #884488;
+            --border-color: #ff44ff;
+            --accent: #ff00ff;
+            --accent-glow: rgba(255, 0, 255, 0.4);
+            --shadow: 0 0 40px rgba(255, 0, 255, 0.05);
+            --glow-text: #ff66ff;
+        }
+        [data-style="club"] .card {
+            border: 1px solid #ff44ff;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.05);
+        }
+
+        /* 7. 军事风 */
+        [data-style="military"] {
+            --bg-primary: #1a2a1a;
+            --bg-secondary: #0a1a0a;
+            --bg-card: #2a3a2a;
+            --bg-input: #3a4a3a;
+            --text-primary: #aaeeaa;
+            --text-secondary: #88cc88;
+            --border-color: #4a6a4a;
+            --accent: #88cc88;
+            --font-family: 'Courier New', monospace;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+        }
+        [data-style="military"] .card {
+            border: 2px solid #4a6a4a;
+        }
+
+        /* 8. 恐怖风 */
+        [data-style="horror"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a0a0a;
+            --bg-card: #1a0a0a;
+            --bg-input: #2a0a0a;
+            --text-primary: #cc4444;
+            --text-secondary: #aa3333;
+            --text-muted: #662222;
+            --border-color: #662222;
+            --accent: #cc4444;
+            --accent-glow: rgba(204, 68, 68, 0.2);
+            --shadow: 0 4px 20px rgba(204, 68, 68, 0.05);
+            --font-family: 'Creepster', 'Georgia', serif;
+        }
+        [data-style="horror"] .card {
+            border: 2px solid #662222;
+            background: #0a0000;
+        }
+
+        /* 9. 怀旧纸张风 */
+        [data-style="paper"] {
+            --bg-primary: #e8dcc8;
+            --bg-secondary: #dcccb8;
+            --bg-card: #f5eee0;
+            --bg-input: #e8dcc8;
+            --text-primary: #3a3228;
+            --text-secondary: #5a5248;
+            --border-color: #b8a88a;
+            --accent: #8a7a5a;
+            --font-family: 'Georgia', 'Times New Roman', serif;
+            --radius: 8px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --sepia: 0.4;
+        }
+        [data-style="paper"] .card {
+            border: 1px solid #b8a88a;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="n"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 0.95 0 0 0 0 0.85 0 0 0 0 0 0 0.08 0"/></filter><rect width="100" height="100" filter="url(%23n)" opacity="0.3"/></svg>');
+            background-size: 200px 200px;
+        }
+
+        /* 10. 报纸风 */
+        [data-style="news"] {
+            --bg-primary: #f5f0e8;
+            --bg-secondary: #e8e0d4;
+            --bg-card: #fcf8f0;
+            --bg-input: #ede4d8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #3a3a3a;
+            --text-muted: #6a6a6a;
+            --border-color: #aaa;
+            --accent: #222;
+            --font-family: 'Times New Roman', 'Georgia', serif;
+            --radius: 0px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --contrast: 1.1;
+        }
+        [data-style="news"] .card {
+            border: 2px solid #aaa;
+            background: #fcf8f0;
+        }
+        [data-style="news"] h1,
+        [data-style="news"] h2 {
+            font-family: 'Times New Roman', serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* 11. 复古西幻（强化版） */
+        [data-style="fantasy"] {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #1f2a4a;
+            --bg-input: #2a3a5a;
+            --text-primary: #e8e0d0;
+            --text-secondary: #b8b0a0;
+            --border-color: #4a5a7a;
+            --accent: #c9a84c;
+            --accent-glow: rgba(201, 168, 76, 0.25);
+            --font-family: 'Georgia', 'Times New Roman', serif;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+            --glow-text: #f0e6c0;
+        }
+        [data-style="fantasy"] .card {
+            border: 1px solid #4a5a7a;
+            background: linear-gradient(145deg, #1f2a4a, #16213e);
+        }
+
+        /* ===== 全局重置 & 基础样式 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background var(--transition), color var(--transition);
+            min-height: 100vh;
+            line-height: 1.6;
+            filter: sepia(var(--sepia)) contrast(var(--contrast));
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 4px;
+        }
+
+        /* ===== 通用组件 ===== */
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 12px 16px 20px;
+            min-height: 100vh;
+        }
+
+        /* ===== 顶部导航 ===== */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            padding: 12px 20px;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            transition: background var(--transition);
+        }
+
+        .app-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent-glow);
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .app-title small {
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            text-shadow: none;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .header-controls select,
+        .header-controls input[type="text"] {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            transition: border var(--transition), background var(--transition);
+            max-width: 160px;
+        }
+        .header-controls select:focus,
+        .header-controls input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .header-controls select option {
+            background: var(--bg-secondary);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .btn:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+        .btn-primary:hover {
+            background: var(--glow-text);
+            color: var(--bg-primary);
+        }
+        .btn-danger {
+            border-color: #cc4444;
+            color: #cc4444;
+        }
+        .btn-danger:hover {
+            background: #cc4444;
+            color: #fff;
+        }
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* ===== 主布局 ===== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 16px;
+            min-height: 70vh;
+        }
+        @media (max-width: 820px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 侧边栏 ===== */
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 12px 0;
+            box-shadow: var(--shadow);
+            height: fit-content;
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+            transition: background var(--transition);
+        }
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar-nav li {
+            padding: 10px 18px;
+            cursor: pointer;
+            transition: all var(--transition);
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .sidebar-nav li:hover {
+            background: var(--card-hover);
+            color: var(--text-primary);
+        }
+        .sidebar-nav li.active {
+            border-left-color: var(--accent);
+            background: var(--card-hover);
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .sidebar-nav li .icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ===== 内容区 ===== */
+        .content-area {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 20px 24px;
+            box-shadow: var(--shadow);
+            min-height: 400px;
+            transition: background var(--transition);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        /* ===== 卡片 ===== */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            transition: all var(--transition);
+            box-shadow: var(--shadow);
+        }
+        .card:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== 表单 ===== */
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            transition: border var(--transition), background var(--transition);
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 540px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 骰子 ===== */
+        .dice-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            margin: 12px 0;
+        }
+        .dice-area .dice-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all var(--transition);
+            font-size: 14px;
+        }
+        .dice-area .dice-btn:hover {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+        .dice-result {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent);
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* ===== 对话流 ===== */
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            margin-bottom: 12px;
+        }
+        .chat-msg {
+            margin-bottom: 10px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            max-width: 85%;
+            animation: fadeIn 0.2s ease;
+        }
+        .chat-msg.gm {
+            background: var(--bg-secondary);
+            border-left: 3px solid var(--accent);
+            align-self: flex-start;
+        }
+        .chat-msg.player {
+            background: var(--bg-input);
+            border-left: 3px solid var(--text-secondary);
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .chat-msg .sender {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+        .chat-msg .content {
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .chat-msg .content .dice-result-inline {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+        }
+        .chat-input-row input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* ===== 角色卡列表 ===== */
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .char-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .char-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+        .char-card .name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .char-card .race-class {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        .char-card .status {
+            font-size: 12px;
+            margin-top: 4px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .char-card .status.alive {
+            background: rgba(100, 200, 100, 0.2);
+            color: #88dd88;
+        }
+        .char-card .status.dead {
+            background: rgba(200, 50, 50, 0.2);
+            color: #dd6666;
+        }
+
+        /* ===== 团本列表 ===== */
+        .adventure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 14px;
+        }
+        .adventure-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .adventure-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+        .adventure-card .title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .adventure-card .desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 4px 0;
+        }
+        .adventure-card .meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ===== 存档列表 ===== */
+        .save-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            margin-bottom: 8px;
+            transition: all var(--transition);
+        }
+        .save-item:hover {
+            border-color: var(--accent);
+        }
+        .save-item .info .name {
+            font-weight: 600;
+        }
+        .save-item .info .detail {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .save-item .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* ===== 资料库 ===== */
+        .library-section {
+            margin-bottom: 16px;
+        }
+        .library-section summary {
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0;
+            color: var(--accent);
+        }
+        .library-section .content {
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 14px;
+            white-space: pre-wrap;
+        }
+
+        /* ===== 状态标签 ===== */
+        .tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        .tag-accent {
+            background: var(--accent);
+            color: var(--bg-primary);
+            border-color: var(--accent);
+        }
+
+        /* ===== 工具类 ===== */
+        .flex {
+            display: flex;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .gap-12 {
+            gap: 12px;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .mb-12 {
+            margin-bottom: 12px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-muted {
+            color: var(--text-muted);
+        }
+        .w-full {
+            width: 100%;
+        }
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== 响应式微调 ===== */
+        @media (max-width: 600px) {
+            .app-title {
+                font-size: 18px;
+            }
+            .app-title small {
+                font-size: 11px;
+            }
+            .content-area {
+                padding: 14px 16px;
+            }
+            .chat-container {
+                height: 280px;
+            }
+            .header-controls select,
+            .header-controls input[type="text"] {
+                max-width: 120px;
+                font-size: 12px;
+            }
+            .btn {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+            .char-grid,
+            .adventure-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 400px) {
+            .char-grid,
+            .adventure-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== 加载动画 ===== */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 提示 ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 28px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            box-shadow: var(--shadow);
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+            max-width: 90%;
+            font-size: 14px;
+        }
+        .toast-error {
+            border-color: #cc4444;
+            color: #cc4444;
+        }
+        .toast-success {
+            border-color: #66cc66;
+            color: #66cc66;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="app">
+        <!-- ===== HEADER ===== -->
+        <header class="app-header">
+            <div class="app-title">
+                🍺 AI酒馆 <small>· 万界跑团台</small>
+            </div>
+            <div class="header-controls">
+                <select id="themeSelect" title="日间/夜间">
+                    <option value="dark">🌙 暗夜</option>
+                    <option value="light">☀️ 日间</option>
+                </select>
+                <select id="styleSelect" title="风格主题">
+                    <option value="fantasy">🏰 西幻</option>
+                    <option value="sketch">✏️ 手绘</option>
+                    <option value="ink">🖌 水墨</option>
+                    <option value="cyber">💠 赛博</option>
+                    <option value="pop">🎨 波普</option>
+                    <option value="pixel">🕹 像素</option>
+                    <option value="club">💃 夜店</option>
+                    <option value="military">⚔️ 军事</option>
+                    <option value="horror">👻 恐怖</option>
+                    <option value="paper">📜 怀旧纸</option>
+                    <option value="news">📰 报纸</option>
+                </select>
+                <button class="btn btn-sm" id="btnApiKey">🔑 API</button>
+                <button class="btn btn-sm" id="btnRefresh">⟳</button>
+            </div>
+        </header>
+
+        <!-- ===== MAIN LAYOUT ===== -->
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <nav class="sidebar" id="sidebar">
+                <ul class="sidebar-nav">
+                    <li class="active" data-page="page-chars"><span class="icon">🧙</span> 角色卡</li>
+                    <li data-page="page-adventures"><span class="icon">📜</span> 团本</li>
+                    <li data-page="page-table"><span class="icon">🎲</span> 跑团台</li>
+                    <li data-page="page-saves"><span class="icon">💾</span> 存档</li>
+                    <li data-page="page-library"><span class="icon">📚</span> 资料库</li>
+                    <li data-page="page-settings"><span class="icon">⚙️</span> 设置</li>
+                </ul>
+            </nav>
+
+            <!-- Content -->
+            <main class="content-area" id="contentArea">
+                <!-- ===== PAGE: 角色卡 ===== -->
+                <section class="page active" id="page-chars">
+                    <div class="flex-between mb-12">
+                        <h2 class="page-title">🧙 角色卡管理</h2>
+                        <div class="flex gap-8">
+                            <button class="btn btn-primary" id="btnNewChar">+ 新建角色</button>
+                            <button class="btn btn-sm" id="btnImportChar">📥 导入</button>
+                        </div>
+                    </div>
+                    <div id="charList" class="char-grid">
+                        <!-- 动态渲染 -->
+                    </div>
+                    <div id="charFormContainer" class="hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title" id="charFormTitle">创建角色</span>
+                                <button class="btn btn-sm btn-danger" id="btnCloseCharForm">✕</button>
+                            </div>
+                            <form id="charForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>角色名 *</label>
+                                        <input type="text" id="cf_name" placeholder="如：卡尔玛" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>玩家</label>
+                                        <input type="text" id="cf_player" placeholder="你的名字">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>系统</label>
+                                        <select id="cf_system">
+                                            <option value="dnd5e">D&D 5E</option>
+                                            <option value="coc7">COC 7th</option>
+                                            <option value="custom">自定义</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>状态</label>
+                                        <select id="cf_status">
+                                            <option value="alive">存活</option>
+                                            <option value="dead">死亡</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>种族</label>
+                                        <input type="text" id="cf_race" placeholder="人类 / 精灵 / 矮人...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>职业</label>
+                                        <input type="text" id="cf_class" placeholder="战士 / 法师 / 游荡者...">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>等级</label>
+                                        <input type="number" id="cf_level" value="1" min="1" max="20">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>经验值</label>
+                                        <input type="number" id="cf_xp" value="0" min="0">
+                                    </div>
+                                </div>
+                                <!-- DND 5E 属性 -->
+                                <div id="dndStats" class="form-row">
+                                    <div class="form-group"><label>力量</label><input type="number" id="cf_str" value="10" min="1" max="30"></div>
+                                    <div class="form-group"><label>敏捷</label><input type="number" id="cf_dex" value="10" min="1" max="30"></div>
+                                    <div class="form-group"><label>体质</label><input type="number" id="cf_con" value="10" min="1" max="30"></div>
+                                    <div class="form-group"><label>智力</label><input type="number" id="cf_int" value="10" min="1" max="30"></div>
+                                    <div class="form-group"><label>感知</label><input type="number" id="cf_wis" value="10" min="1" max="30"></div>
+                                    <div class="form-group"><label>魅力</label><input type="number" id="cf_cha" value="10" min="1" max="30"></div>
+                                </div>
+                                <!-- COC 7th 属性 -->
+                                <div id="cocStats" class="hidden form-row">
+                                    <div class="form-group"><label>力量</label><input type="number" id="cf_coc_str" value="50" min="1" max="100"></div>
+                                    <div class="form-group"><label>体型</label><input type="number" id="cf_coc_siz" value="50" min="1" max="100"></div>
+                                    <div class="form-group"><label>敏捷</label><input type="number" id="cf_coc_dex" value="50" min="1" max="100"></div>
+                                    <div class="form-group"><label>意志</label><input type="number" id="cf_coc_pow" value="50" min="1" max="100"></div>
+                                    <div class="form-group"><label>智力</label><input type="number" id="cf_coc_int" value="50" min="1" max="100"></div>
+                                    <div class="form-group"><label>魅力</label><input type="number" id="cf_coc_app" value="50" min="1" max="100"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label>背景故事 / 备注</label>
+                                    <textarea id="cf_bio" placeholder="角色的背景故事、个性、牵绊..."></textarea>
+                                </div>
+                                <div class="flex gap-8 mt-8">
+                                    <button type="submit" class="btn btn-primary">💾 保存角色</button>
+                                    <button type="button" class="btn" id="btnExportChar">📤 导出</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== PAGE: 团本 ===== -->
+                <section class="page" id="page-adventures">
+                    <div class="flex-between mb-12">
+                        <h2 class="page-title">📜 团本</h2>
+                        <div class="flex gap-8">
+                            <button class="btn btn-primary" id="btnNewAdventure">+ 新建团本</button>
+                            <button class="btn btn-sm" id="btnImportAdventure">📥 导入</button>
+                        </div>
+                    </div>
+                    <div id="adventureList" class="adventure-grid">
+                        <!-- 动态渲染 -->
+                    </div>
+                    <div id="advFormContainer" class="hidden">
+                        <div class="card">
+                            <div class="card-header">
+                                <span class="card-title" id="advFormTitle">创建团本</span>
+                                <button class="btn btn-sm btn-danger" id="btnCloseAdvForm">✕</button>
+                            </div>
+                            <form id="advForm">
+                                <div class="form-group">
+                                    <label>团本名称 *</label>
+                                    <input type="text" id="af_name" placeholder="如：新手村地精洞穴" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>简介</label>
+                                    <input type="text" id="af_desc" placeholder="简短描述">
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>规则系统</label>
+                                        <select id="af_system">
+                                            <option value="dnd5e">D&D 5E</option>
+                                            <option value="coc7">COC 7th</option>
+                                            <option value="custom">自定义</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>建议人数</label>
+                                        <input type="number" id="af_players" value="3" min="1" max="8">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>场景链 (JSON, 可选)</label>
+                                    <textarea id="af_scenes" placeholder='[{"id":"start","desc":"你站在地精洞穴入口..."}]' rows="3"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>怪物/NPC数据 (JSON, 可选)</label>
+                                    <textarea id="af_monsters" placeholder='[{"name":"地精","ac":13,"hp":7,"attack":"+4 造成1d6+2","skills":"潜行+6"}]' rows="3"></textarea>
+                                </div>
+                                <div class="flex gap-8 mt-8">
+                                    <button type="submit" class="btn btn-primary">💾 保存团本</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== PAGE: 跑团台 ===== -->
+                <section class="page" id="page-table">
+                    <div class="flex-between mb-12">
+                        <h2 class="page-title">🎲 跑团台</h2>
+                        <div class="flex gap-8">
+                            <button class="btn btn-sm" id="btnLoadSaveForTable">💾 读档</button>
+                            <button class="btn btn-sm btn-primary" id="btnSaveTable">💾 保存进度</button>
+                        </div>
+                    </div>
+                    <!-- 选择角色 & 团本 -->
+                    <div class="card">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>当前团本</label>
+                                <select id="tableAdventure"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>使用角色 (多选)</label>
+                                <select id="tableChars" multiple size="2"></select>
+                            </div>
+                        </div>
+                        <div class="flex gap-8">
+                            <button class="btn btn-primary btn-sm" id="btnStartTable">🚀 开始/继续</button>
+                            <button class="btn btn-sm" id="btnResetTable">🔄 重置对话</button>
+                        </div>
+                    </div>
+                    <!-- 对话 & 状态 -->
+                    <div class="card">
+                        <div class="flex-between mb-8">
+                            <span class="card-title">💬 对话流</span>
+                            <span id="tableStatus" class="tag">就绪</span>
+                        </div>
+                        <div class="chat-container" id="chatContainer"></div>
+                        <div class="chat-input-row">
+                            <input type="text" id="chatInput" placeholder="描述你的行动，如：我走向地精洞穴..." />
+                            <button class="btn btn-primary" id="btnSendChat">发送</button>
+                        </div>
+                        <div class="dice-area">
+                            <span style="font-weight:600;color:var(--text-secondary);">🎲 骰子：</span>
+                            <button class="dice-btn" data-dice="d4">d4</button>
+                            <button class="dice-btn" data-dice="d6">d6</button>
+                            <button class="dice-btn" data-dice="d8">d8</button>
+                            <button class="dice-btn" data-dice="d10">d10</button>
+                            <button class="dice-btn" data-dice="d12">d12</button>
+                            <button class="dice-btn" data-dice="d20">d20</button>
+                            <button class="dice-btn" data-dice="d100">d100</button>
+                            <span class="dice-result" id="diceResult">-</span>
+                            <button class="btn btn-sm" id="btnRollAdv">优势</button>
+                            <button class="btn btn-sm" id="btnRollDis">劣势</button>
+                        </div>
+                    </div>
+                    <!-- 状态侧栏简化 -->
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">👥 小队状态</span></div>
+                        <div id="partyStatus"><span class="text-muted">尚未开始跑团</span></div>
+                    </div>
+                </section>
+
+                <!-- ===== PAGE: 存档 ===== -->
+                <section class="page" id="page-saves">
+                    <div class="flex-between mb-12">
+                        <h2 class="page-title">💾 存档</h2>
+                        <div class="flex gap-8">
+                            <button class="btn btn-sm" id="btnExportAllSaves">📤 导出全部</button>
+                            <button class="btn btn-sm" id="btnImportSaves">📥 导入</button>
+                        </div>
+                    </div>
+                    <div id="saveList"></div>
+                </section>
+
+                <!-- ===== PAGE: 资料库 ===== -->
+                <section class="page" id="page-library">
+                    <h2 class="page-title">📚 本地资料库</h2>
+                    <div class="library-section">
+                        <details>
+                            <summary>📖 D&D 5E 常用规则</summary>
+                            <div class="content">
+                                <strong>核心属性：</strong>力量、敏捷、体质、智力、感知、魅力<br>
+                                <strong>关键检定：</strong>攻击检定 d20+属性调整+熟练<br>
+                                <strong>豁免：</strong>属性豁免 DC = 8 + 熟练 + 属性调整<br>
+                                <strong>休息：</strong>短休1小时，长休8小时<br>
+                                <strong>死亡豁免：</strong>3次成功稳定，3次失败死亡
+                            </div>
+                        </details>
+                        <details>
+                            <summary>🧙 D&D 5E 常用法术 (节选)</summary>
+                            <div class="content">
+                                <strong>0环(戏法)：</strong>魔法伎俩、光亮术、法师之手、冷冻射线<br>
+                                <strong>1环：</strong>魔法飞弹、护盾术、疗伤术、燃烧之手、睡眠术<br>
+                                <strong>2环：</strong>镜影术、迷踪步、灼热射线、人类定身术<br>
+                                <strong>3环：</strong>火球术、飞行术、加速术、解除魔法
+                            </div>
+                        </details>
+                        <details>
+                            <summary>📜 COC 7th 快速参考</summary>
+                            <div class="content">
+                                <strong>核心属性：</strong>力量、体型、敏捷、意志、智力、魅力<br>
+                                <strong>技能：</strong>聆听、侦查、图书馆使用、神秘学、潜行<br>
+                                <strong>理智(SAN)：</strong>初始 = 意志×5，损失可导致疯狂<br>
+                                <strong>战斗：</strong>斗殴、闪避、射击
+                            </div>
+                        </details>
+                        <details>
+                            <summary>📝 自定义笔记</summary>
+                            <div class="content">
+                                <textarea id="libraryNotes" style="width:100%;min-height:120px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border-color);border-radius:6px;padding:8px;font-family:inherit;" placeholder="在这里记录你的自定义规则、房规、法术扩展..."></textarea>
+                                <button class="btn btn-sm mt-8" id="btnSaveNotes">💾 保存笔记</button>
+                            </div>
+                        </details>
+                    </div>
+                </section>
+
+                <!-- ===== PAGE: 设置 ===== -->
+                <section class="page" id="page-settings">
+                    <h2 class="page-title">⚙️ 设置</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>DeepSeek API Key (或兼容OpenAI格式)</label>
+                            <input type="password" id="apiKeyInput" placeholder="sk-... 留空使用本地模式">
+                            <div class="flex gap-8 mt-8">
+                                <button class="btn btn-primary btn-sm" id="btnSaveApiKey">💾 保存</button>
+                                <button class="btn btn-sm" id="btnClearApiKey">清除</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>API 端点 (默认 DeepSeek)</label>
+                            <input type="text" id="apiEndpoint" placeholder="https://api.deepseek.com/v1/chat/completions">
+                        </div>
+                        <div class="form-group">
+                            <label>模型名称</label>
+                            <input type="text" id="apiModel" placeholder="deepseek-chat">
+                        </div>
+                        <div class="form-group">
+                            <label>系统提示前缀 (可选)</label>
+                            <textarea id="systemPromptPrefix" placeholder="额外的系统指令..." rows="2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>数据操作</label>
+                            <div class="flex gap-8">
+                                <button class="btn btn-danger btn-sm" id="btnClearAllData">🗑 清除所有数据</button>
+                                <button class="btn btn-sm" id="btnExportAllData">📤 导出所有数据</button>
+                                <button class="btn btn-sm" id="btnImportAllData">📥 导入所有数据</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- ===== 隐藏文件输入 ===== -->
+    <input type="file" id="fileInput" accept=".json" style="display:none">
+
+    <script>
+        // ============================================================
+        //  AI酒馆 · 万界跑团台  —— 完整 JavaScript 逻辑
+        //  数据存储: localStorage (以 "tavern_" 为前缀)
+        //  API: 兼容 OpenAI 格式 (DeepSeek)
+        // ============================================================
+
+        (function() {
+            'use strict';
+
+            // ---------- 常量 ----------
+            const STORAGE_PREFIX = 'tavern_';
+            const DEFAULT_MODEL = 'deepseek-chat';
+            const DEFAULT_ENDPOINT = 'https://api.deepseek.com/v1/chat/completions';
+
+            // ---------- 状态 ----------
+            let state = {
+                characters: [], // 角色卡
+                adventures: [], // 团本
+                saves: [], // 存档
+                currentTable: null, // 当前跑团会话 { adventureId, charIds, messages, sceneId, status }
+                apiKey: '',
+                apiEndpoint: DEFAULT_ENDPOINT,
+                apiModel: DEFAULT_MODEL,
+                systemPrefix: '',
+                libraryNotes: '',
+                theme: 'dark',
+                style: 'fantasy',
+            };
+
+            let editingCharId = null;
+            let editingAdvId = null;
+            let currentPage = 'page-chars';
+
+            // DOM 缓存
+            const $ = (s) => document.querySelector(s);
+            const $$ = (s) => document.querySelectorAll(s);
+
+            // ---------- 工具函数 ----------
+            function uid() { return Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7); }
+
+            function lsKey(k) { return STORAGE_PREFIX + k; }
+
+            function loadData(key, def) {
+                try {
+                    const raw = localStorage.getItem(lsKey(key));
+                    return raw ? JSON.parse(raw) : def;
+                } catch { return def; }
+            }
+
+            function saveData(key, data) {
+                localStorage.setItem(lsKey(key), JSON.stringify(data));
+            }
+
+            function toast(msg, type) {
+                const old = document.querySelector('.toast');
+                if (old) old.remove();
+                const el = document.createElement('div');
+                el.className = 'toast' + (type === 'error' ? ' toast-error' : type === 'success' ? ' toast-success' : '');
+                el.textContent = msg;
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 3000);
+            }
+
+            // 骰子
+            function rollDice(sides) {
+                if (sides === 100) {
+                    const a = Math.floor(Math.random() * 10);
+                    const b = Math.floor(Math.random() * 10);
+                    return (a === 0 && b === 0) ? 100 : (a * 10 + b);
+                }
+                return Math.floor(Math.random() * sides) + 1;
+            }
+
+            function rollWithAdv(sides) {
+                const a = rollDice(sides),
+                    b = rollDice(sides);
+                return { result: Math.max(a, b), rolls: [a, b], label: '优势' };
+            }
+
+            function rollWithDis(sides) {
+                const a = rollDice(sides),
+                    b = rollDice(sides);
+                return { result: Math.min(a, b), rolls: [a, b], label: '劣势' };
+            }
+
+            // 属性调整值 (DND)
+            function abilityMod(val) {
+                return Math.floor((val - 10) / 2);
+            }
+
+            // 深拷贝
+            function clone(o) { return JSON.parse(JSON.stringify(o)); }
+
+            // ---------- 初始化 ----------
+            function init() {
+                // 加载数据
+                state.characters = loadData('characters', []);
+                state.adventures = loadData('adventures', []);
+                state.saves = loadData('saves', []);
+                state.libraryNotes = loadData('libraryNotes', '');
+                state.apiKey = loadData('apiKey', '');
+                state.apiEndpoint = loadData('apiEndpoint', DEFAULT_ENDPOINT);
+                state.apiModel = loadData('apiModel', DEFAULT_MODEL);
+                state.systemPrefix = loadData('systemPrefix', '');
+                state.theme = loadData('theme', 'dark');
+                state.style = loadData('style', 'fantasy');
+
+                // 应用主题 & 风格
+                applyTheme(state.theme);
+                applyStyle(state.style);
+                document.getElementById('themeSelect').value = state.theme;
+                document.getElementById('styleSelect').value = state.style;
+
+                // API 设置
+                document.getElementById('apiKeyInput').value = state.apiKey;
+                document.getElementById('apiEndpoint').value = state.apiEndpoint;
+                document.getElementById('apiModel').value = state.apiModel;
+                document.getElementById('systemPromptPrefix').value = state.systemPrefix;
+                document.getElementById('libraryNotes').value = state.libraryNotes;
+
+                // 渲染
+                renderAll();
+
+                // 事件绑定
+                bindEvents();
+
+                // 自动恢复最后的跑团会话
+                const lastTable = loadData('lastTable', null);
+                if (lastTable) {
+                    state.currentTable = lastTable;
+                    renderTable();
+                }
+            }
+
+            // ---------- 主题 & 风格 ----------
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                state.theme = theme;
+                saveData('theme', theme);
+            }
+
+            function applyStyle(style) {
+                document.documentElement.setAttribute('data-style', style);
+                state.style = style;
+                saveData('style', style);
+            }
+
+            // ---------- 渲染 ----------
+            function renderAll() {
+                renderCharList();
+                renderAdventureList();
+                renderSaveList();
+                renderTableSelects();
+                renderTable();
+            }
+
+            function renderCharList() {
+                const container = document.getElementById('charList');
+                const chars = state.characters;
+                if (!chars.length) {
+                    container.innerHTML = '<div class="text-muted" style="padding:20px;text-align:center;">还没有角色，点击「+ 新建角色」创建你的第一个冒险者！</div>';
+                    return;
+                }
+                container.innerHTML = chars.map(c => `
+                    <div class="char-card" data-id="${c.id}">
+                        <div class="name">${c.name || '未命名'}</div>
+                        <div class="race-class">${c.race || '?'} · ${c.class || '?'} Lv.${c.level || 1}</div>
+                        <div class="status ${c.status === 'dead' ? 'dead' : 'alive'}">${c.status === 'dead' ? '💀 死亡' : '✦ 存活'}</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">${c.system || 'dnd5e'}</div>
+                        <div class="flex gap-8" style="margin-top:8px;justify-content:center;">
+                            <button class="btn btn-sm btn-edit-char" data-id="${c.id}">✏️</button>
+                            <button class="btn btn-sm btn-danger btn-del-char" data-id="${c.id}">🗑</button>
+                            <button class="btn btn-sm btn-export-char" data-id="${c.id}">📤</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // 事件委托
+                container.querySelectorAll('.btn-edit-char').forEach(b => {
+                    b.addEventListener('click', (e) => { e.stopPropagation();
+                        openCharForm(b.dataset.id); });
+                });
+                container.querySelectorAll('.btn-del-char').forEach(b => {
+                    b.addEventListener('click', (e) => { e.stopPropagation();
+                        deleteChar(b.dataset.id); });
+                });
+                container.querySelectorAll('.btn-export-char').forEach(b => {
+                    b.addEventListener('click', (e) => { e.stopPropagation();
+                        exportChar(b.dataset.id); });
+                });
+                container.querySelectorAll('.char-card').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const id = el.dataset.id;
+                        const c = state.characters.find(x => x.id === id);
+                        if (c) toast(`📋 ${c.name} | ${c.race} ${c.class} Lv${c.level} | ${c.system}`, '');
+                    });
+                });
+            }
+
+            function renderAdventureList() {
+                const container = document.getElementById('adventureList');
+                const advs = state.adventures;
+                if (!advs.length) {
+                    container.innerHTML = '<div class="text-muted" style="padding:20px;text-align:center;">还没有团本，点击「+ 新建团本」创建你的第一个冒险！</div>';
+                    return;
+                }
+                container.innerHTML = advs.map(a => `
+                    <div class="adventure-card" data-id="${a.id}">
+                        <div class="title">${a.name || '未命名团本'}</div>
+                        <div class="desc">${a.desc || '无简介'}</div>
+                        <div class="meta">${a.system || 'dnd5e'} · ${a.players || 3}人</div>
+                        <div class="flex gap-8" style="margin-top:8px;">
+                            <button class="btn btn-sm btn-edit-adv" data-id="${a.id}">✏️</button>
+                            <button class="btn btn-sm btn-danger btn-del-adv" data-id="${a.id}">🗑</button>
+                            <button class="btn btn-sm btn-export-adv" data-id="${a.id}">📤</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.querySelectorAll('.btn-edit-adv').forEach(b => {
+                    b.addEventListener('click', (e) => { e.stopPropagation();
+                        openAdvForm(b.dataset.id); });
+                });
+                container.querySelectorAll('.btn-del-adv').forEach(b => {
+                    b.addEventListener('click', (e) => { e.stopPropagation();
+                        deleteAdventure(b.dataset.id); });
+                });
+                container.querySelectorAll('.btn-export-adv').forEach(b => {
+                    b.addEventListener('click', (e) => { e.stopPropagation();
+                        exportAdventure(b.dataset.id); });
+                });
+            }
+
+            function renderSaveList() {
+                const container = document.getElementById('saveList');
+                const saves = state.saves;
+                if (!saves.length) {
+                    container.innerHTML = '<div class="text-muted" style="padding:16px;text-align:center;">暂无存档。跑团时记得保存！</div>';
+                    return;
+                }
+                container.innerHTML = saves.map(s => `
+                    <div class="save-item" data-id="${s.id}">
+                        <div class="info">
+                            <div class="name">${s.name || '未命名存档'}</div>
+                            <div class="detail">${s.adventureName || '?'} · ${new Date(s.updated).toLocaleString()}</div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-sm btn-load-save" data-id="${s.id}">📂 载入</button>
+                            <button class="btn btn-sm btn-danger btn-del-save" data-id="${s.id}">🗑</button>
+                            <button class="btn btn-sm btn-export-save" data-id="${s.id}">📤</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                container.querySelectorAll('.btn-load-save').forEach(b => {
+                    b.addEventListener('click', () => loadSave(b.dataset.id));
+                });
+                container.querySelectorAll('.btn-del-save').forEach(b => {
+                    b.addEventListener('click', () => deleteSave(b.dataset.id));
+                });
+                container.querySelectorAll('.btn-export-save').forEach(b => {
+                    b.addEventListener('click', () => exportSave(b.dataset.id));
+                });
+            }
+
+            function renderTableSelects() {
+                const advSel = document.getElementById('tableAdventure');
+                const charSel = document.getElementById('tableChars');
+                const currentAdv = state.currentTable ? state.currentTable.adventureId : null;
+
+                // 团本列表
+                advSel.innerHTML = '<option value="">-- 选择团本 --</option>' +
+                    state.adventures.map(a =>
+                        `<option value="${a.id}" ${a.id === currentAdv ? 'selected' : ''}>${a.name || '未命名'}</option>`)
+                    .join('');
+
+                // 角色列表 (多选)
+                const selectedCharIds = state.currentTable ? state.currentTable.charIds || [] : [];
+                charSel.innerHTML = state.characters.map(c =>
+                    `<option value="${c.id}" ${selectedCharIds.includes(c.id) ? 'selected' : ''}>${c.name || '未命名'} (${c.race || '?'} ${c.class || '?'})</option>`
+                ).join('');
+                // 多选尺寸
+                charSel.size = Math.min(4, state.characters.length + 1);
+                if (charSel.size < 2) charSel.size = 2;
+            }
+
+            function renderTable() {
+                const container = document.getElementById('chatContainer');
+                const statusEl = document.getElementById('tableStatus');
+                const table = state.currentTable;
+
+                if (!table) {
+                    container.innerHTML = '<div class="text-muted" style="padding:20px;text-align:center;">选择团本和角色，点击「开始/继续」开启冒险！</div>';
+                    statusEl.textContent = '⏸ 未开始';
+                    document.getElementById('partyStatus').innerHTML = '<span class="text-muted">尚未开始跑团</span>';
+                    return;
+                }
+
+                // 状态
+                statusEl.textContent = table.status || '进行中';
+
+                // 对话
+                const msgs = table.messages || [];
+                if (!msgs.length) {
+                    container.innerHTML =
+                        '<div class="text-muted" style="padding:20px;text-align:center;">对话尚未开始，发送消息与AI GM互动！</div>';
+                } else {
+                    container.innerHTML = msgs.map(m => `
+                        <div class="chat-msg ${m.role === 'gm' ? 'gm' : 'player'}">
+                            <div class="sender">${m.role === 'gm' ? '🎲 GM' : (m.characterName || '玩家')}</div>
+                            <div class="content">${m.content}</div>
+                        </div>
+                    `).join('');
+                    container.scrollTop = container.scrollHeight;
+                }
+
+                // 小队状态
+                const party = state.characters.filter(c => (table.charIds || []).includes(c.id));
+                if (party.length) {
+                    document.getElementById('partyStatus').innerHTML = party.map(c => `
+                        <div style="padding:4px 0;border-bottom:1px solid var(--border-color);">
+                            <strong>${c.name}</strong> ${c.race} ${c.class} Lv${c.level}
+                            <span class="tag ${c.status === 'dead' ? 'dead' : 'alive'}">${c.status === 'dead' ? '💀' : '✦'}</span>
+                            ${c.system === 'dnd5e' ? `HP: ${c.hp || '?'}` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    document.getElementById('partyStatus').innerHTML = '<span class="text-muted">未选择角色</span>';
+                }
+
+                // 保存当前会话到 localStorage
+                saveData('lastTable', table);
+            }
+
+            // ---------- 角色卡 CRUD ----------
+            function openCharForm(id) {
+                const container = document.getElementById('charFormContainer');
+                container.classList.remove('hidden');
+                const form = document.getElementById('charForm');
+                form.reset();
+
+                editingCharId = id;
+
+                if (id) {
+                    const c = state.characters.find(x => x.id === id);
+                    if (!c) { toast('角色不存在', 'error'); return; }
+                    document.getElementById('charFormTitle').textContent = '✏️ 编辑角色';
+                    document.getElementById('cf_name').value = c.name || '';
+                    document.getElementById('cf_player').value = c.player || '';
+                    document.getElementById('cf_system').value = c.system || 'dnd5e';
+                    document.getElementById('cf_status').value = c.status || 'alive';
+                    document.getElementById('cf_race').value = c.race || '';
+                    document.getElementById('cf_class').value = c.class || '';
+                    document.getElementById('cf_level').value = c.level || 1;
+                    document.getElementById('cf_xp').value = c.xp || 0;
+                    document.getElementById('cf_bio').value = c.bio || '';
+                    // DND stats
+                    const s = c.stats || {};
+                    document.getElementById('cf_str').value = s.str || 10;
+                    document.getElementById('cf_dex').value = s.dex || 10;
+                    document.getElementById('cf_con').value = s.con || 10;
+                    document.getElementById('cf_int').value = s.int || 10;
+                    document.getElementById('cf_wis').value = s.wis || 10;
+                    document.getElementById('cf_cha').value = s.cha || 10;
+                    // COC stats
+                    document.getElementById('cf_coc_str').value = s.coc_str || 50;
+                    document.getElementById('cf_coc_siz').value = s.coc_siz || 50;
+                    document.getElementById('cf_coc_dex').value = s.coc_dex || 50;
+                    document.getElementById('cf_coc_pow').value = s.coc_pow || 50;
+                    document.getElementById('cf_coc_int').value = s.coc_int || 50;
+                    document.getElementById('cf_coc_app').value = s.coc_app || 50;
+                } else {
+                    document.getElementById('charFormTitle').textContent = '🆕 创建角色';
+                    // 默认值
+                    document.getElementById('cf_system').value = 'dnd5e';
+                    document.getElementById('cf_status').value = 'alive';
+                    document.getElementById('cf_level').value = 1;
+                    document.getElementById('cf_xp').value = 0;
+                }
+                toggleStatVisibility(document.getElementById('cf_system').value);
+                container.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function closeCharForm() {
+                document.getElementById('charFormContainer').classList.add('hidden');
+                editingCharId = null;
+            }
+
+            function toggleStatVisibility(system) {
+                const dnd = document.getElementById('dndStats');
+                const coc = document.getElementById('cocStats');
+                if (system === 'coc7') {
+                    dnd.classList.add('hidden');
+                    coc.classList.remove('hidden');
+                } else {
+                    dnd.classList.remove('hidden');
+                    coc.classList.add('hidden');
+                }
+            }
+
+            function saveCharFromForm() {
+                const name = document.getElementById('cf_name').value.trim();
+                if (!name) { toast('请输入角色名', 'error'); return false; }
+
+                const system = document.getElementById('cf_system').value;
+                const status = document.getElementById('cf_status').value;
+
+                let stats = {};
+                if (system === 'dnd5e') {
+                    stats = {
+                        str: parseInt(document.getElementById('cf_str').value) || 10,
+                        dex: parseInt(document.getElementById('cf_dex').value) || 10,
+                        con: parseInt(document.getElementById('cf_con').value) || 10,
+                        int: parseInt(document.getElementById('cf_int').value) || 10,
+                        wis: parseInt(document.getElementById('cf_wis').value) || 10,
+                        cha: parseInt(document.getElementById('cf_cha').value) || 10,
+                    };
+                } else if (system === 'coc7') {
+                    stats = {
+                        coc_str: parseInt(document.getElementById('cf_coc_str').value) || 50,
+                        coc_siz: parseInt(document.getElementById('cf_coc_siz').value) || 50,
+                        coc_dex: parseInt(document.getElementById('cf_coc_dex').value) || 50,
+                        coc_pow: parseInt(document.getElementById('cf_coc_pow').value) || 50,
+                        coc_int: parseInt(document.getElementById('cf_coc_int').value) || 50,
+                        coc_app: parseInt(document.getElementById('cf_coc_app').value) || 50,
+                    };
+                }
+
+                const charData = {
+                    id: editingCharId || uid(),
+                    name: name,
+                    player: document.getElementById('cf_player').value.trim() || '',
+                    system: system,
+                    status: status,
+                    race: document.getElementById('cf_race').value.trim() || '未知',
+                    class: document.getElementById('cf_class').value.trim() || '未知',
+                    level: parseInt(document.getElementById('cf_level').value) || 1,
+                    xp: parseInt(document.getElementById('cf_xp').value) || 0,
+                    bio: document.getElementById('cf_bio').value.trim() || '',
+                    stats: stats,
+                    hp: 0, // 可后续计算
+                    updated: Date.now(),
+                };
+
+                if (editingCharId) {
+                    const idx = state.characters.findIndex(x => x.id === editingCharId);
+                    if (idx >= 0) {
+                        // 保留旧id，覆盖其他
+                        const old = state.characters[idx];
+                        charData.created = old.created || Date.now();
+                        state.characters[idx] = charData;
+                    } else {
+                        state.characters.push(charData);
+                    }
+                    toast('✅ 角色已更新', 'success');
+                } else {
+                    charData.created = Date.now();
+                    state.characters.push(charData);
+                    toast('✅ 角色已创建', 'success');
+                }
+                saveData('characters', state.characters);
+                renderCharList();
+                renderTableSelects();
+                closeCharForm();
+                return true;
+            }
+
+            function deleteChar(id) {
+                if (!confirm('确定要删除这个角色吗？')) return;
+                state.characters = state.characters.filter(c => c.id !== id);
+                saveData('characters', state.characters);
+                renderCharList();
+                renderTableSelects();
+                toast('🗑 角色已删除', '');
+            }
+
+            function exportChar(id) {
+                const c = state.characters.find(x => x.id === id);
+                if (!c) return;
+                downloadJson(c, `角色_${c.name || '未命名'}.json`);
+                toast('📤 角色已导出', 'success');
+            }
+
+            function importCharFromFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!data.name) { toast('无效的角色数据', 'error'); return; }
+                        data.id = data.id || uid();
+                        data.updated = Date.now();
+                        state.characters.push(data);
+                        saveData('characters', state.characters);
+                        renderCharList();
+                        renderTableSelects();
+                        toast('✅ 角色导入成功', 'success');
+                    } catch { toast('文件解析失败', 'error'); }
+                };
+                reader.readAsText(file);
+            }
+
+            // ---------- 团本 CRUD ----------
+            function openAdvForm(id) {
+                const container = document.getElementById('advFormContainer');
+                container.classList.remove('hidden');
+                editingAdvId = id;
+                const form = document.getElementById('advForm');
+                form.reset();
+
+                if (id) {
+                    const a = state.adventures.find(x => x.id === id);
+                    if (!a) { toast('团本不存在', 'error'); return; }
+                    document.getElementById('advFormTitle').textContent = '✏️ 编辑团本';
+                    document.getElementById('af_name').value = a.name || '';
+                    document.getElementById('af_desc').value = a.desc || '';
+                    document.getElementById('af_system').value = a.system || 'dnd5e';
+                    document.getElementById('af_players').value = a.players || 3;
+                    document.getElementById('af_scenes').value = JSON.stringify(a.scenes || [], null, 2);
+                    document.getElementById('af_monsters').value = JSON.stringify(a.monsters || [], null, 2);
+                } else {
+                    document.getElementById('advFormTitle').textContent = '🆕 创建团本';
+                }
+                container.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function closeAdvForm() {
+                document.getElementById('advFormContainer').classList.add('hidden');
+                editingAdvId = null;
+            }
+
+            function saveAdvFromForm() {
+                const name = document.getElementById('af_name').value.trim();
+                if (!name) { toast('请输入团本名称', 'error'); return false; }
+
+                let scenes = [];
+                let monsters = [];
+                try {
+                    const s = document.getElementById('af_scenes').value.trim();
+                    if (s) scenes = JSON.parse(s);
+                    const m = document.getElementById('af_monsters').value.trim();
+                    if (m) monsters = JSON.parse(m);
+                } catch { toast('场景或怪物数据格式有误，请检查JSON', 'error'); return false; }
+
+                const advData = {
+                    id: editingAdvId || uid(),
+                    name: name,
+                    desc: document.getElementById('af_desc').value.trim() || '',
+                    system: document.getElementById('af_system').value,
+                    players: parseInt(document.getElementById('af_players').value) || 3,
+                    scenes: scenes,
+                    monsters: monsters,
+                    updated: Date.now(),
+                };
+
+                if (editingAdvId) {
+                    const idx = state.adventures.findIndex(x => x.id === editingAdvId);
+                    if (idx >= 0) {
+                        const old = state.adventures[idx];
+                        advData.created = old.created || Date.now();
+                        state.adventures[idx] = advData;
+                    } else {
+                        state.adventures.push(advData);
+                    }
+                    toast('✅ 团本已更新', 'success');
+                } else {
+                    advData.created = Date.now();
+                    state.adventures.push(advData);
+                    toast('✅ 团本已创建', 'success');
+                }
+                saveData('adventures', state.adventures);
+                renderAdventureList();
+                renderTableSelects();
+                closeAdvForm();
+                return true;
+            }
+
+            function deleteAdventure(id) {
+                if (!confirm('确定要删除这个团本吗？')) return;
+                state.adventures = state.adventures.filter(a => a.id !== id);
+                saveData('adventures', state.adventures);
+                renderAdventureList();
+                renderTableSelects();
+                toast('🗑 团本已删除', '');
+            }
+
+            function exportAdventure(id) {
+                const a = state.adventures.find(x => x.id === id);
+                if (!a) return;
+                downloadJson(a, `团本_${a.name || '未命名'}.json`);
+                toast('📤 团本已导出', 'success');
+            }
+
+            function importAdventureFromFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!data.name) { toast('无效的团本数据', 'error'); return; }
+                        data.id = data.id || uid();
+                        data.updated = Date.now();
+                        state.adventures.push(data);
+                        saveData('adventures', state.adventures);
+                        renderAdventureList();
+                        renderTableSelects();
+                        toast('✅ 团本导入成功', 'success');
+                    } catch { toast('文件解析失败', 'error'); }
+                };
+                reader.readAsText(file);
+            }
+
+            // ---------- 跑团核心 ----------
+            function startTable() {
+                const advId = document.getElementById('tableAdventure').value;
+                const charSel = document.getElementById('tableChars');
+                const charIds = Array.from(charSel.selectedOptions).map(o => o.value);
+
+                if (!advId) { toast('请选择一个团本', 'error'); return; }
+                if (!charIds.length) { toast('请至少选择一个角色', 'error'); return; }
+
+                const adv = state.adventures.find(a => a.id === advId);
+                if (!adv) { toast('团本不存在', 'error'); return; }
+
+                // 检查角色是否存活
+                const deadChars = charIds.filter(id => {
+                    const c = state.characters.find(x => x.id === id);
+                    return c && c.status === 'dead';
+                });
+                if (deadChars.length) {
+                    toast(`角色 ${deadChars.map(id => state.characters.find(x=>x.id===id)?.name||'?').join(', ')} 已死亡，不能参与`, 'error');
+                    return;
+                }
+
+                // 创建或更新会话
+                if (state.currentTable && state.currentTable.adventureId === advId) {
+                    // 更新角色列表
+                    state.currentTable.charIds = charIds;
+                } else {
+                    state.currentTable = {
+                        adventureId: advId,
+                        charIds: charIds,
+                        messages: [],
+                        sceneId: adv.scenes && adv.scenes.length ? adv.scenes[0].id : 'start',
+                        status: '进行中',
+                        started: Date.now(),
+                    };
+                }
+                // 添加系统消息
+                if (!state.currentTable.messages || !state.currentTable.messages.length) {
+                    const charNames = charIds.map(id => {
+                        const c = state.characters.find(x => x.id === id);
+                        return c ? c.name : '未知';
+                    }).join('、');
+                    state.currentTable.messages = [{
+                        role: 'gm',
+                        characterName: 'GM',
+                        content: `📖 欢迎来到「${adv.name}」！\n冒险者：${charNames}\n${adv.desc || '祝你好运！'}\n\n请描述你的行动，或说「帮助」查看指令。`,
+                        timestamp: Date.now(),
+                    }];
+                }
+
+                saveData('lastTable', state.currentTable);
+                renderTable();
+                renderTableSelects();
+                toast('🚀 跑团已开始！', 'success');
+            }
+
+            async function sendChatMessage() {
+                const input = document.getElementById('chatInput');
+                const text = input.value.trim();
+                if (!text) return;
+
+                const table = state.currentTable;
+                if (!table) { toast('请先开始跑团', 'error'); return; }
+
+                // 玩家消息
+                const charId = table.charIds && table.charIds.length ? table.charIds[0] : null;
+                const charName = charId ? (state.characters.find(c => c.id === charId)?.name || '玩家') : '玩家';
+                const playerMsg = {
+                    role: 'player',
+                    characterName: charName,
+                    content: text,
+                    timestamp: Date.now(),
+                };
+                table.messages.push(playerMsg);
+                renderTable();
+
+                // 调用 AI
+                const adv = state.adventures.find(a => a.id === table.adventureId);
+                const sysPrompt = buildSystemPrompt(adv, table, charId);
+
+                // 构造对话历史
+                const history = table.messages.map(m => ({
+                    role: m.role === 'gm' ? 'assistant' : 'user',
+                    content: (m.role === 'gm' ? '[GM] ' : '[' + (m.characterName || '玩家') + '] ') + m.content,
+                }));
+
+                // 准备 API 请求
+                const apiKey = state.apiKey;
+                if (!apiKey) {
+                    // 本地模式：简单回应
+                    const localReply = `[本地模式] 你说了: "${text}"\n(请设置 DeepSeek API Key 以启用 AI GM)`;
+                    const gmMsg = { role: 'gm', characterName: 'GM', content: localReply, timestamp: Date.now() };
+                    table.messages.push(gmMsg);
+                    renderTable();
+                    saveData('lastTable', table);
+                    input.value = '';
+                    return;
+                }
+
+                // 显示加载状态
+                const statusEl = document.getElementById('tableStatus');
+                statusEl.textContent = '⏳ AI 思考中...';
+
+                try {
+                    const messages = [
+                        { role: 'system', content: sysPrompt },
+                        ...history,
+                        { role: 'user', content: text }
+                    ];
+
+                    const resp = await fetch(state.apiEndpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + apiKey,
+                        },
+                        body: JSON.stringify({
+                            model: state.apiModel || DEFAULT_MODEL,
+                            messages: messages,
+                            temperature: 0.85,
+                            max_tokens: 2048,
+                            stream: false,
+                        }),
+                    });
+
+                    if (!resp.ok) {
+                        const err = await resp.text();
+                        throw new Error(`API 错误 (${resp.status}): ${err}`);
+                    }
+
+                    const data = await resp.json();
+                    const reply = data.choices?.[0]?.message?.content || '（AI 无回复）';
+
+                    const gmMsg = { role: 'gm', characterName: 'GM', content: reply, timestamp: Date.now() };
+                    table.messages.push(gmMsg);
+                    renderTable();
+                    saveData('lastTable', table);
+
+                } catch (err) {
+                    toast('AI 调用失败: ' + err.message, 'error');
+                    const gmMsg = { role: 'gm', characterName: 'GM', content: `⚠️ 错误: ${err.message}`, timestamp: Date
+                            .now() };
+                    table.messages.push(gmMsg);
+                    renderTable();
+                } finally {
+                    statusEl.textContent = table.status || '进行中';
+                }
+
+                input.value = '';
+                input.focus();
+            }
+
+            function buildSystemPrompt(adv, table, charId) {
+                let prompt = '你是一个专业的TRPG地下城主(GM)，请以生动、沉浸的方式描述场景、判定行动、推进剧情。';
+                prompt += '\n\n## 团本信息\n';
+                prompt += `名称: ${adv?.name || '未知'}\n`;
+                prompt += `系统: ${adv?.system || 'dnd5e'}\n`;
+                prompt += `简介: ${adv?.desc || '无'}\n`;
+                if (adv?.scenes && adv.scenes.length) {
+                    prompt += `\n## 场景\n${JSON.stringify(adv.scenes, null, 2)}\n`;
+                }
+                if (adv?.monsters && adv.monsters.length) {
+                    prompt += `\n## 怪物/NPC\n${JSON.stringify(adv.monsters, null, 2)}\n`;
+                }
+
+                if (charId) {
+                    const c = state.characters.find(x => x.id === charId);
+                    if (c) {
+                        prompt += `\n## 当前角色\n`;
+                        prompt += `姓名: ${c.name}\n种族: ${c.race}\n职业: ${c.class}\n等级: ${c.level}\n`;
+                        if (c.system === 'dnd5e') {
+                            const s = c.stats || {};
+                            prompt += `属性: 力${s.str||10} 敏${s.dex||10} 体${s.con||10} 智${s.int||10} 感${s.wis||10} 魅${s.cha||10}\n`;
+                            prompt += `调整: 力${abilityMod(s.str||10)} 敏${abilityMod(s.dex||10)} 体${abilityMod(s.con||10)} 智${abilityMod(s.int||10)} 感${abilityMod(s.wis||10)} 魅${abilityMod(s.cha||10)}\n`;
+                        } else if (c.system === 'coc7') {
+                            const s = c.stats || {};
+                            prompt += `属性: 力${s.coc_str||50} 体${s.coc_siz||50} 敏${s.coc_dex||50} 意${s.coc_pow||50} 智${s.coc_int||50} 魅${s.coc_app||50}\n`;
+                        }
+                        if (c.bio) prompt += `背景: ${c.bio}\n`;
+                    }
+                }
+
+                prompt += `\n## 对话历史\n`;
+                const msgs = table.messages || [];
+                const last10 = msgs.slice(-10);
+                last10.forEach(m => {
+                    prompt += `[${m.role === 'gm' ? 'GM' : (m.characterName || '玩家')}] ${m.content}\n`;
+                });
+
+                prompt += `\n## 指令\n`;
+                prompt += `- 玩家会描述行动，你需要判定结果并推进剧情。\n`;
+                prompt += `- 如需检定，请说明骰子类型和DC，并等待玩家掷骰。\n`;
+                prompt += `- 保持沉浸式叙事，使用第二人称"你"。\n`;
+                prompt += `- 如果玩家说"帮助"，列出可用指令。\n`;
+
+                if (state.systemPrefix) {
+                    prompt += `\n## 额外系统指令\n${state.systemPrefix}\n`;
+                }
+
+                return prompt;
+            }
+
+            function resetTable() {
+                if (!state.currentTable) return;
+                if (!confirm('重置对话将清除所有消息，确定吗？')) return;
+                state.currentTable.messages = [];
+                const adv = state.adventures.find(a => a.id === state.currentTable.adventureId);
+                const charNames = (state.currentTable.charIds || []).map(id => {
+                    const c = state.characters.find(x => x.id === id);
+                    return c ? c.name : '未知';
+                }).join('、');
+                state.currentTable.messages.push({
+                    role: 'gm',
+                    characterName: 'GM',
+                    content: `🔄 对话已重置。\n继续冒险！${adv ? '「'+adv.name+'」' : ''}\n冒险者：${charNames}`,
+                    timestamp: Date.now(),
+                });
+                saveData('lastTable', state.currentTable);
+                renderTable();
+                toast('🔄 对话已重置', '');
+            }
+
+            function saveTableProgress() {
+                const table = state.currentTable;
+                if (!table) { toast('没有进行中的跑团', 'error'); return; }
+                const adv = state.adventures.find(a => a.id === table.adventureId);
+                const saveName = prompt('存档名称：', adv ? adv.name + ' - ' + new Date().toLocaleString() : '跑团存档');
+                if (saveName === null) return;
+                const saveDataObj = {
+                    id: uid(),
+                    name: saveName || '未命名存档',
+                    adventureId: table.adventureId,
+                    adventureName: adv ? adv.name : '未知',
+                    charIds: table.charIds || [],
+                    messages: table.messages || [],
+                    sceneId: table.sceneId || 'start',
+                    status: table.status || '进行中',
+                    updated: Date.now(),
+                };
+                state.saves.push(saveDataObj);
+                saveData('saves', state.saves);
+                renderSaveList();
+                toast('💾 进度已保存', 'success');
+            }
+
+            function loadSave(id) {
+                const s = state.saves.find(x => x.id === id);
+                if (!s) { toast('存档不存在', 'error'); return; }
+                // 恢复角色和团本存在性检查
+                const advExists = state.adventures.some(a => a.id === s.adventureId);
+                if (!advExists) {
+                    toast('该存档对应的团本已删除', 'error');
+                    return;
+                }
+                const validChars = s.charIds.filter(id => state.characters.some(c => c.id === id));
+                if (validChars.length !== s.charIds.length) {
+                    toast('部分角色已删除，已跳过', '');
+                }
+                state.currentTable = {
+                    adventureId: s.adventureId,
+                    charIds: validChars,
+                    messages: s.messages || [],
+                    sceneId: s.sceneId || 'start',
+                    status: s.status || '进行中',
+                    started: s.updated || Date.now(),
+                };
+                saveData('lastTable', state.currentTable);
+                renderTable();
+                renderTableSelects();
+                toast('📂 存档已载入', 'success');
+            }
+
+            function deleteSave(id) {
+                if (!confirm('确定删除此存档？')) return;
+                state.saves = state.saves.filter(s => s.id !== id);
+                saveData('saves', state.saves);
+                renderSaveList();
+                toast('🗑 存档已删除', '');
+            }
+
+            function exportSave(id) {
+                const s = state.saves.find(x => x.id === id);
+                if (!s) return;
+                downloadJson(s, `存档_${s.name || '未命名'}.json`);
+                toast('📤 存档已导出', 'success');
+            }
+
+            function exportAllSaves() {
+                if (!state.saves.length) { toast('没有存档可导出', 'error'); return; }
+                downloadJson(state.saves, `全部存档_${new Date().toISOString().slice(0,10)}.json`);
+                toast('📤 全部存档已导出', 'success');
+            }
+
+            function importSavesFromFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (!Array.isArray(data)) { toast('数据格式错误，需要数组', 'error'); return; }
+                        data.forEach(s => { if (!s.id) s.id = uid(); if (!s.updated) s.updated = Date.now(); });
+                        state.saves = state.saves.concat(data);
+                        saveData('saves', state.saves);
+                        renderSaveList();
+                        toast('✅ 导入 ' + data.length + ' 个存档', 'success');
+                    } catch { toast('文件解析失败', 'error'); }
+                };
+                reader.readAsText(file);
+            }
+
+            // ---------- 骰子 ----------
+            function handleDiceRoll(sides, mode) {
+                let result;
+                if (mode === 'adv') {
+                    result = rollWithAdv(sides);
+                } else if (mode === 'dis') {
+                    result = rollWithDis(sides);
+                } else {
+                    result = { result: rollDice(sides), rolls: [result], label: '' };
+                }
+                const label = result.label ? ` (${result.label})` : '';
+                const rollStr = result.rolls ? ` [${result.rolls.join(', ')}]` : '';
+                document.getElementById('diceResult').textContent = result.result;
+                toast(`🎲 d${sides}${label} = ${result.result}${rollStr}`, '');
+                return result;
+            }
+
+            // ---------- 数据导出/导入 ----------
+            function downloadJson(data, filename) {
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(url), 5000);
+            }
+
+            function exportAllData() {
+                const all = {
+                    characters: state.characters,
+                    adventures: state.adventures,
+                    saves: state.saves,
+                    libraryNotes: state.libraryNotes,
+                    theme: state.theme,
+                    style: state.style,
+                    exported: new Date().toISOString(),
+                };
+                downloadJson(all, `跑团台全部数据_${new Date().toISOString().slice(0,10)}.json`);
+                toast('📤 全部数据已导出', 'success');
+            }
+
+            function importAllDataFromFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.characters) state.characters = data.characters;
+                        if (data.adventures) state.adventures = data.adventures;
+                        if (data.saves) state.saves = data.saves;
+                        if (data.libraryNotes !== undefined) state.libraryNotes = data.libraryNotes;
+                        saveData('characters', state.characters);
+                        saveData('adventures', state.adventures);
+                        saveData('saves', state.saves);
+                        saveData('libraryNotes', state.libraryNotes);
+                        renderAll();
+                        document.getElementById('libraryNotes').value = state.libraryNotes;
+                        toast('✅ 全部数据已导入', 'success');
+                    } catch { toast('文件解析失败', 'error'); }
+                };
+                reader.readAsText(file);
+            }
+
+            function clearAllData() {
+                if (!confirm('⚠️ 确定要清除所有数据吗？此操作不可恢复！')) return;
+                if (!confirm('再次确认：清除所有角色、团本、存档、设置？')) return;
+                localStorage.clear();
+                location.reload();
+            }
+
+            // ---------- 事件绑定 ----------
+            function bindEvents() {
+                // 导航
+                document.querySelectorAll('.sidebar-nav li').forEach(li => {
+                    li.addEventListener('click', () => {
+                        document.querySelectorAll('.sidebar-nav li').forEach(l => l.classList.remove('active'));
+                        li.classList.add('active');
+                        const pageId = li.dataset.page;
+                        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                        const target = document.getElementById(pageId);
+                        if (target) target.classList.add('active');
+                        currentPage = pageId;
+                    });
+                });
+
+                // 主题 & 风格
+                document.getElementById('themeSelect').addEventListener('change', (e) => {
+                    applyTheme(e.target.value);
+                });
+                document.getElementById('styleSelect').addEventListener('change', (e) => {
+                    applyStyle(e.target.value);
+                });
+
+                // 角色
+                document.getElementById('btnNewChar').addEventListener('click', () => openCharForm(null));
+                document.getElementById('btnCloseCharForm').addEventListener('click', closeCharForm);
+                document.getElementById('charForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    saveCharFromForm();
+                });
+                document.getElementById('cf_system').addEventListener('change', (e) => {
+                    toggleStatVisibility(e.target.value);
+                });
+                document.getElementById('btnExportChar').addEventListener('click', () => {
+                    if (editingCharId) exportChar(editingCharId);
+                    else toast('请先保存角色再导出', 'error');
+                });
+                document.getElementById('btnImportChar').addEventListener('click', () => {
+                    document.getElementById('fileInput').accept = '.json';
+                    document.getElementById('fileInput').onchange = (e) => {
+                        if (e.target.files[0]) importCharFromFile(e.target.files[0]);
+                        e.target.value = '';
+                    };
+                    document.getElementById('fileInput').click();
+                });
+
+                // 团本
+                document.getElementById('btnNewAdventure').addEventListener('click', () => openAdvForm(null));
+                document.getElementById('btnCloseAdvForm').addEventListener('click', closeAdvForm);
+                document.getElementById('advForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    saveAdvFromForm();
+                });
+                document.getElementById('btnImportAdventure').addEventListener('click', () => {
+                    document.getElementById('fileInput').accept = '.json';
+                    document.getElementById('fileInput').onchange = (e) => {
+                        if (e.target.files[0]) importAdventureFromFile(e.target.files[0]);
+                        e.target.value = '';
+                    };
+                    document.getElementById('fileInput').click();
+                });
+
+                // 跑团
+                document.getElementById('btnStartTable').addEventListener('click', startTable);
+                document.getElementById('btnResetTable').addEventListener('click', resetTable);
+                document.getElementById('btnSaveTable').addEventListener('click', saveTableProgress);
+                document.getElementById('btnLoadSaveForTable').addEventListener('click', () => {
+                    // 切换到存档页
+                    document.querySelector('.sidebar-nav li[data-page="page-saves"]')?.click();
+                });
+                document.getElementById('btnSendChat').addEventListener('click', sendChatMessage);
+                document.getElementById('chatInput').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendChatMessage();
+                    }
+                });
+
+                // 骰子
+                document.querySelectorAll('.dice-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const sides = parseInt(btn.dataset.dice.replace('d', ''));
+                        if (!isNaN(sides)) handleDiceRoll(sides);
+                    });
+                });
+                document.getElementById('btnRollAdv').addEventListener('click', () => {
+                    const sides = prompt('输入骰子面数 (如 20):', '20');
+                    if (sides) {
+                        const n = parseInt(sides);
+                        if (!isNaN(n) && n > 0) handleDiceRoll(n, 'adv');
+                    }
+                });
+                document.getElementById('btnRollDis').addEventListener('click', () => {
+                    const sides = prompt('输入骰子面数 (如 20):', '20');
+                    if (sides) {
+                        const n = parseInt(sides);
+                        if (!isNaN(n) && n > 0) handleDiceRoll(n, 'dis');
+                    }
+                });
+
+                // 存档
+                document.getElementById('btnExportAllSaves').addEventListener('click', exportAllSaves);
+                document.getElementById('btnImportSaves').addEventListener('click', () => {
+                    document.getElementById('fileInput').accept = '.json';
+                    document.getElementById('fileInput').onchange = (e) => {
+                        if (e.target.files[0]) importSavesFromFile(e.target.files[0]);
+                        e.target.value = '';
+                    };
+                    document.getElementById('fileInput').click();
+                });
+
+                // 资料库笔记
+                document.getElementById('btnSaveNotes').addEventListener('click', () => {
+                    state.libraryNotes = document.getElementById('libraryNotes').value;
+                    saveData('libraryNotes', state.libraryNotes);
+                    toast('📝 笔记已保存', 'success');
+                });
+
+                // 设置
+                document.getElementById('btnSaveApiKey').addEventListener('click', () => {
+                    state.apiKey = document.getElementById('apiKeyInput').value.trim();
+                    state.apiEndpoint = document.getElementById('apiEndpoint').value.trim() || DEFAULT_ENDPOINT;
+                    state.apiModel = document.getElementById('apiModel').value.trim() || DEFAULT_MODEL;
+                    state.systemPrefix = document.getElementById('systemPromptPrefix').value.trim();
+                    saveData('apiKey', state.apiKey);
+                    saveData('apiEndpoint', state.apiEndpoint);
+                    saveData('apiModel', state.apiModel);
+                    saveData('systemPrefix', state.systemPrefix);
+                    toast('🔑 API 设置已保存', 'success');
+                });
+                document.getElementById('btnClearApiKey').addEventListener('click', () => {
+                    document.getElementById('apiKeyInput').value = '';
+                    state.apiKey = '';
+                    saveData('apiKey', '');
+                    toast('已清除 API Key', '');
+                });
+                document.getElementById('btnClearAllData').addEventListener('click', clearAllData);
+                document.getElementById('btnExportAllData').addEventListener('click', exportAllData);
+                document.getElementById('btnImportAllData').addEventListener('click', () => {
+                    document.getElementById('fileInput').accept = '.json';
+                    document.getElementById('fileInput').onchange = (e) => {
+                        if (e.target.files[0]) importAllDataFromFile(e.target.files[0]);
+                        e.target.value = '';
+                    };
+                    document.getElementById('fileInput').click();
+                });
+
+                // 刷新按钮
+                document.getElementById('btnRefresh').addEventListener('click', () => {
+                    renderAll();
+                    toast('⟳ 已刷新', '');
+                });
+
+                // API Key 快捷按钮
+                document.getElementById('btnApiKey').addEventListener('click', () => {
+                    document.querySelector('.sidebar-nav li[data-page="page-settings"]')?.click();
+                    document.getElementById('apiKeyInput').focus();
+                });
+
+                // 自动保存笔记
+                document.getElementById('libraryNotes').addEventListener('blur', () => {
+                    state.libraryNotes = document.getElementById('libraryNotes').value;
+                    saveData('libraryNotes', state.libraryNotes);
+                });
+            }
+
+            // ---------- 启动 ----------
+            document.addEventListener('DOMContentLoaded', init);
+
+            // 暴露一些功能到全局以便调试
+            window.__tavern = {
+                state,
+                rollDice,
+                saveCharFromForm,
+                saveAdvFromForm,
+                startTable,
+                sendChatMessage,
+                renderAll,
+            };
+
+        })();
+    </script>
+</body>
+</html>
