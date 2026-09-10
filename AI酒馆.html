@@ -678,6 +678,15 @@ table { max-width:100%; }
 .chat-area { display:flex; flex-direction:column; height:calc(100vh - 240px); min-height:420px; }
 .chat-scroll { flex:1; overflow-y:auto; padding:16px; background:var(--bg2); border:1px solid var(--border); border-radius:var(--radius); display:flex; flex-direction:column; gap:12px; }
 .chat-msg { display:flex; gap:10px; max-width:92%; }
+/* 对话气泡按发送者分隔着色（--ph 由 JS 按名字哈希分配：GM/剧本杀各角色/玩家各自独立气泡色） */
+.chat-msg { --ph:210; }
+.chat-msg .avatar { background:hsl(var(--ph) 55% 45% / .18); border-color:hsl(var(--ph) 60% 50% / .35); }
+.chat-meta b { color:hsl(var(--ph) 65% 55%); }
+.chat-bubble { border-left:3px solid hsl(var(--ph) 60% 50% / .45); }
+.chat-msg.me { --ph:210; }
+.chat-msg.me .avatar { background:var(--accent); color:#fff; border-color:var(--accent); }
+.chat-msg.me .chat-meta b { color:var(--accent); }
+.chat-msg.me .chat-bubble { border-left-color:transparent; }
 .chat-msg.me { align-self:flex-end; flex-direction:row-reverse; }
 .chat-msg .avatar { width:38px; height:38px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:19px; background:var(--card2); border:1px solid var(--border); box-shadow:var(--shadow-sm); }
 .chat-msg.me .avatar { background:var(--accent); color:#fff; border-color:var(--accent); }
@@ -809,6 +818,9 @@ table { max-width:100%; }
 .item-card .ic-actions { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
 .item-card .ic-actions .btn { flex:1 1 auto; min-width:0; }
 .item-card .ic-corner { position:absolute; top:10px; right:10px; }
+/* 右上角分类标用透明背景（避免遮挡团本标题，观感同剧本杀标签） */
+.item-card .ic-corner .tag { background:rgba(255,255,255,.14); }
+.item-card .ic-corner .tag-accent { background:rgba(255,255,255,.14); color:var(--accent); border-color:var(--accent); }
 .icon-tile { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; background:var(--hover); border:1px solid var(--border); }
 
 /* ---- 模态框 ---- */
@@ -902,6 +914,10 @@ details.lsec .lsec-bd th { background:var(--hover); }
 .kv { display:flex; gap:6px; align-items:baseline; }
 .kv b { color:var(--accent); }
 .attr-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(105px,1fr)); gap:8px; }
+/* COC 属性框内含 −/＋ 按钮 + 数字输入框，列加宽、字号加大，避免数值被挤得看不清 */
+#cocAttrGrid { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
+#cocAttrGrid .attr-box { padding:10px 8px; }
+#cocAttrGrid .coc-val { font-size:17px; font-weight:700; }
 .attr-box { text-align:center; padding:8px 6px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--card2); }
 .attr-box .ab-name { font-size:11px; color:var(--text2); }
 .attr-box .ab-val { font-size:19px; font-weight:900; color:var(--text); }
@@ -1078,19 +1094,52 @@ details.lsec .lsec-bd th { background:var(--hover); }
               </select>
               <input type="text" id="cf_gender_custom" placeholder="输入性别" class="hidden" style="margin-top:6px;">
             </div>
-            <div class="fg"><label>头像（预设字符画 / 自定义）</label>
-              <select id="cf_avatar">
+            <div class="fg"><label>头像（预设 emoji 图标 / 自定义）</label>
+              <select id="cf_avatar" size="6">
                 <option value="🧙">🧙 法师</option><option value="⚔️">⚔️ 战士</option><option value="🏹">🏹 游侠</option>
                 <option value="🛡️">🛡️ 圣武士</option><option value="🗡️">🗡️ 游荡者</option><option value="🔮">🔮 术士</option>
                 <option value="🕯️">🕯️ 牧师</option><option value="🥋">🥋 武僧</option><option value="🎻">🎻 吟游诗人</option>
                 <option value="🪓">🪓 野蛮人</option><option value="👁️">👁️ 邪术师</option><option value="🌿">🌿 德鲁伊</option>
-                <option value="🧝">🧝 精灵</option><option value="🐺">🐺 狼人</option><option value="🐉">🐉 龙裔</option>
-                <option value="🕵️">🕵️ 侦探</option><option value="🎩">🎩 绅士</option><option value="💃">💃 舞者</option>
-                <option value="🌸">🌸 少女</option><option value="🌙">🌙 神秘</option><option value="👻">👻 幽灵</option>
-                <option value="🎭">🎭 面具</option><option value="🧟">🧟 不死者</option><option value="💀">💀 骷髅</option>
-                <option value="🦊">🦊 狐妖</option><option value="🧚">🧚 妖精</option><option value="🎓">🎓 学者</option>
-                <option value="🪙">🪙 商人</option><option value="🧪">🧪 炼金师</option><option value="🕸️">🕸️ 蛛网</option>
-                <option value="⛏️">⛏️ 矿工</option><option value="🍀">🍀 幸运</option><option value="📜">📜 书卷</option>
+                <option value="🧝">🧝 精灵</option><option value="🧙‍♀️">🧙‍♀️ 女巫</option><option value="🧛">🧛 吸血鬼</option>
+                <option value="🐺">🐺 狼人</option><option value="🐉">🐉 龙裔</option><option value="🧚">🧚 妖精</option>
+                <option value="👹">👹 鬼怪</option><option value="👺">👺 天狗</option><option value="🧟">🧟 不死者</option>
+                <option value="💀">💀 骷髅</option><option value="👻">👻 幽灵</option><option value="🎃">🎃 南瓜</option>
+                <option value="🕵️">🕵️ 侦探</option><option value="🎩">🎩 绅士</option><option value="🎓">🎓 学者</option>
+                <option value="👮">👮 警探</option><option value="🩺">🩺 医生</option><option value="⚖️">⚖️ 律师</option>
+                <option value="📷">📷 摄影师</option><option value="📰">📰 记者</option><option value="🔬">🔬 科学家</option>
+                <option value="🧪">🧪 炼金师</option><option value="🪙">🪙 商人</option><option value="⛏️">⛏️ 矿工</option>
+                <option value="🎻">🎻 乐手</option><option value="🎨">🎨 画家</option><option value="🖋️">🖋️ 作家</option>
+                <option value="💃">💃 舞者</option><option value="🎭">🎭 面具</option><option value="🤡">🤡 小丑</option>
+                <option value="🌸">🌸 少女</option><option value="👘">👘 和服</option><option value="🤺">🤺 剑客</option>
+                <option value="🏹">🏹 弓手</option><option value="🛶">🛶 船夫</option><option value="🐎">🐎 骑士</option>
+                <option value="🐱">🐱 猫</option><option value="🐶">🐶 狗</option><option value="🦊">🦊 狐妖</option>
+                <option value="🐰">🐰 兔</option><option value="🐻">🐻 熊</option><option value="🦉">🦉 猫头鹰</option>
+                <option value="🐦">🐦 鸟</option><option value="🦅">🦅 鹰</option><option value="🐍">🐍 蛇</option>
+                <option value="🐢">🐢 龟</option><option value="🦈">🦈 鲨鱼</option><option value="🐋">🐋 鲸</option>
+                <option value="🦋">🦋 蝴蝶</option><option value="🐝">🐝 蜂</option><option value="🦂">🦂 蝎</option>
+                <option value="🕷️">🕷️ 蜘蛛</option><option value="🦇">🦇 蝙蝠</option><option value="🐙">🐙 章鱼</option>
+                <option value="🦑">🦑 鱿鱼</option><option value="🐸">🐸 蛙</option><option value="🐉">🐉 龙</option>
+                <option value="🦄">🦄 独角兽</option><option value="🐲">🐲 东方龙</option><option value="🦕">🦕 恐龙</option>
+                <option value="🌙">🌙 神秘</option><option value="⭐">⭐ 星光</option><option value="☀️">☀️ 太阳</option>
+                <option value="🔥">🔥 火焰</option><option value="❄️">❄️ 冰雪</option><option value="⚡">⚡ 闪电</option>
+                <option value="🌊">🌊 波涛</option><option value="🌪️">🌪️ 风暴</option><option value="🍃">🍃 风</option>
+                <option value="🌵">🌵 仙人掌</option><option value="🌹">🌹 玫瑰</option><option value="🍀">🍀 幸运</option>
+                <option value="🍄">🍄 蘑菇</option><option value="🪴">🪴 盆栽</option><option value="📜">📜 书卷</option>
+                <option value="📖">📖 书本</option><option value="📚">📚 书堆</option><option value="🗝️">🗝️ 钥匙</option>
+                <option value="⚗️">⚗️ 蒸馏瓶</option><option value="💎">💎 宝石</option><option value="👑">👑 王冠</option>
+                <option value="🎖️">🎖️ 勋章</option><option value="🏆">🏆 奖杯</option><option value="⚔️">⚔️ 双剑</option>
+                <option value="🛡️">🛡️ 盾牌</option><option value="🏹">🏹 弓</option><option value="🪄">🪄 魔杖</option>
+                <option value="⚱️">⚱️ 骨灰瓮</option><option value="🕰️">🕰️ 时钟</option><option value="🎲">🎲 骰子</option>
+                <option value="🧭">🧭 罗盘</option><option value="🗺️">🗺️ 地图</option><option value="🔦">🔦 手电筒</option>
+                <option value="🎥">🎥 摄像机</option><option value="🎤">🎤 麦克风</option><option value="🎸">🎸 吉他</option>
+                <option value="🥁">🥁 鼓</option><option value="🏮">🏮 灯笼</option><option value="🪷">🪷 莲花</option>
+                <option value="🌌">🌌 星云</option><option value="🛸">🛸 UFO</option><option value="🤖">🤖 机器人</option>
+                <option value="🧬">🧬 DNA</option><option value="👽">👽 外星人</option><option value="🗿">🗿 石像</option>
+                <option value="🏴‍☠️">🏴‍☠️ 海盗</option><option value="🎅">🎅 圣诞老人</option><option value="🧜">🧜 人鱼</option>
+                <option value="🧝‍♀️">🧝‍♀️ 女精灵</option><option value="🧞">🧞 灯神</option><option value="🦹">🦹 反派</option>
+                <option value="🦸">🦸 英雄</option><option value="🧕">🧕 头纱</option><option value="👳">👳 头巾</option>
+                <option value="🤠">🤠 牛仔</option><option value="🎖️">🎖️ 军官</option><option value="🥷">🥷 忍者</option>
+                <option value="🧘">🧘 冥想</option><option value="🏇">🏇 骑手</option><option value="🧗">🧗 攀岩者</option>
                 <option value="自定义">✍️ 自定义…</option>
               </select>
               <input type="text" id="cf_avatar_custom" maxlength="8" placeholder="输入自定义头像（1-2个字符/emoji）" class="hidden" style="margin-top:6px;">
@@ -1103,12 +1152,24 @@ details.lsec .lsec-bd th { background:var(--hover); }
             </div>
           </div>
           <div class="fr-4" id="dndBasicRow">
-            <div class="fg"><label>种族</label>
-              <select id="cf_race"><option value="人类">人类</option><option value="精灵">精灵</option><option value="矮人">矮人</option><option value="半精灵">半精灵</option><option value="半兽人">半兽人</option><option value="侏儒">侏儒</option><option value="半身人">半身人</option><option value="龙裔">龙裔</option><option value="自定义">🧩 自定义…</option></select>
+            <div class="fg"><label>种族 <span class="small muted">（可搜索）</span></label>
+              <input type="text" id="cf_race_search" placeholder="输入种族名过滤…（如：精灵 / 矮人 / 提夫林）" style="margin-bottom:4px;width:100%;padding:6px;border-radius:6px;border:1px solid var(--border);background:var(--input);color:var(--text);">
+              <select id="cf_race" size="5"><option value="人类">人类</option><option value="精灵">精灵</option><option value="矮人">矮人</option><option value="半精灵">半精灵</option><option value="半兽人">半兽人</option><option value="侏儒">侏儒</option><option value="半身人">半身人</option><option value="龙裔">龙裔</option><option value="提夫林">提夫林</option><option value="自定义">🧩 自定义…</option></select>
+              <select id="cf_subrace" class="hidden" style="margin-top:4px;"></select>
               <input type="text" id="cf_race_custom_dnd" placeholder="输入自定义种族（如：猫人族 / 星裔）" class="hidden" style="margin-top:6px;">
+              <div id="raceInfoBox" class="notice info small mt4" style="display:none;"></div>
             </div>
-            <div class="fg"><label>职业</label>
-              <select id="cf_class">
+            <div class="fg"><label>阵营倾向</label>
+              <select id="cf_alignment">
+                <option value="">（未选择）</option>
+                <option>守序善良</option><option>中立善良</option><option>混乱善良</option>
+                <option>守序中立</option><option>绝对中立</option><option>混乱中立</option>
+                <option>守序邪恶</option><option>中立邪恶</option><option>混乱邪恶</option>
+              </select>
+            </div>
+            <div class="fg"><label>职业 <span class="small muted">（可搜索）</span></label>
+              <input type="text" id="cf_class_search" placeholder="输入职业名过滤…（如：战士 / 法师 / 吟游诗人）" style="margin-bottom:4px;width:100%;padding:6px;border-radius:6px;border:1px solid var(--border);background:var(--input);color:var(--text);">
+              <select id="cf_class" size="5">
                 <option value="战士">⚔️ 战士</option><option value="法师">🔮 法师</option><option value="游荡者">🗡️ 游荡者</option>
                 <option value="牧师">⛪ 牧师</option><option value="德鲁伊">🌿 德鲁伊</option><option value="游侠">🏹 游侠</option>
                 <option value="吟游诗人">🎻 吟游诗人</option><option value="武僧">🥋 武僧</option><option value="圣武士">🛡️ 圣武士</option>
@@ -1116,6 +1177,15 @@ details.lsec .lsec-bd th { background:var(--hover); }
                 <option value="自定义">🧩 自定义…</option>
               </select>
               <input type="text" id="cf_class_custom_dnd" placeholder="输入自定义职业（如：魔剑士 / 神射手）" class="hidden" style="margin-top:6px;">
+              <div class="flex gap8" style="margin-top:6px;">
+                <select id="cf_class2" style="flex:1;"><option value="">➕ 兼职副职业（可选）</option>
+                  <option value="战士">⚔️ 战士</option><option value="法师">🔮 法师</option><option value="游荡者">🗡️ 游荡者</option>
+                  <option value="牧师">⛪ 牧师</option><option value="德鲁伊">🌿 德鲁伊</option><option value="游侠">🏹 游侠</option>
+                  <option value="吟游诗人">🎻 吟游诗人</option><option value="武僧">🥋 武僧</option><option value="圣武士">🛡️ 圣武士</option>
+                  <option value="野蛮人">🪓 野蛮人</option><option value="术士">🔥 术士</option><option value="邪术师">👁️ 邪术师</option>
+                </select>
+                <span class="muted small aic" title="简化规则：副职业等级 = 主职业等级；提供副职业技能池与武器/护甲熟练，法术仍按主职业">ℹ️ 兼职（副职业等级=主等级）</span>
+              </div>
             </div>
             <div class="fg"><label>等级</label><input type="number" id="cf_level" value="1" min="1" max="20"></div>
             <div class="fg"><label>经验值 XP</label><input type="number" id="cf_xp" value="0" min="0"></div>
@@ -1123,18 +1193,20 @@ details.lsec .lsec-bd th { background:var(--hover); }
           <div id="dndAgeBox" class="hidden"></div>
           <div id="cocBasicRow" class="hidden">
             <div class="fr-3">
-              <div class="fg"><label>职业</label>
-                <select id="cf_coc_occ"></select>
+              <div class="fg"><label>职业 <span class="small muted">（输入或选择，选中后此处会显示所选职业）</span></label>
+                <input type="text" id="coc_occ_search" placeholder="输入职业名或自定义职业…（如：侦探 / 医生 / 风水师）" style="margin-bottom:4px;width:100%;padding:6px;border-radius:6px;border:1px solid var(--border);background:var(--input);color:var(--text);">
+                <select id="cf_coc_occ" size="8"></select>
                 <input type="text" id="cf_coc_occ_custom" placeholder="输入自定义职业（如：私家厨师 / 风水师）" class="hidden" style="margin-top:6px;">
               </div>
-              <div class="fg"><label>信用评级范围</label><input type="text" id="cf_credit" placeholder="选职业后自动填充" disabled></div>
+              <div class="fg"><label>信用评级范围</label><input type="text" id="cf_credit" placeholder="选职业后自动填充" disabled>
+                <input type="text" id="cf_credit_custom" placeholder="自定义职业：手动填范围，如 10-30 / 20-50（0-99）" class="hidden" style="margin-top:4px;"></div>
               <div class="fg" id="cocAgeBox"></div>
             </div>
           </div>
           <div id="customBasicRow" class="fr-3 hidden">
-            <div class="fg"><label>种族/出身</label><input type="text" id="cf_race_custom" placeholder="如：人类 / 异世界转生者"></div>
-            <div class="fg"><label>职业/身份</label><input type="text" id="cf_class_custom" placeholder="如：学生 / 骑士 / 魔王"></div>
-            <div class="fg"><label>等级/强度</label><input type="number" id="cf_level_custom" value="1" min="1" max="99"></div>
+            <div class="fg" id="cf_race_custom_fg"><label>种族/出身</label><input type="text" id="cf_race_custom" placeholder="如：人类 / 异世界转生者"></div>
+            <div class="fg" id="cf_class_custom_fg"><label>职业/身份</label><input type="text" id="cf_class_custom" placeholder="如：学生 / 骑士 / 魔王"></div>
+            <div class="fg" id="cf_level_custom_fg"><label>等级/强度</label><input type="number" id="cf_level_custom" value="1" min="1" max="99"></div>
           </div>
           <div class="flex jcb aic mt12">
             <span class="muted small">向导会按系统自动计算属性与衍生值</span>
@@ -1177,6 +1249,8 @@ details.lsec .lsec-bd th { background:var(--hover); }
               <div class="flex gap8">
                 <button class="btn btn-primary btn-sm" id="btnCocRoll">🎲 标准掷骰生成</button>
                 <button class="btn btn-sm" id="btnCocQuick">⚡ 快速生成（平均骰）</button>
+                <button class="btn btn-sm" id="btnCocSimplified">🎯 简化生成（简化骰）</button>
+                <button class="btn btn-sm" id="btnCocLuck">🍀 幸运骰</button>
                 <button class="btn btn-sm" data-method="manual" id="btnCocManual">✍️ 手动</button>
               </div>
             </div>
@@ -1223,6 +1297,22 @@ details.lsec .lsec-bd th { background:var(--hover); }
             </div>
             <div class="fg"><label>已选法术</label>
               <div class="chip-row" id="chosenSpells"></div>
+            </div>
+            <div class="fg"><label>熟练项（按职业预设自动勾选，可增删；兼职合并主+副职业）</label>
+              <div id="dndProfBox"></div>
+            </div>
+            <div class="fg"><label>自定义法术（法表外原创法术，输入名称/环位/作用即可添加）</label>
+              <div class="flex gap8 mb4">
+                <input type="text" id="cs_name" placeholder="法术名（如：霜冻新星）" style="flex:1.2;">
+                <select id="cs_lv" style="flex:0.7;">
+                  <option value="0">戏法</option><option value="1">1环</option><option value="2">2环</option><option value="3">3环</option>
+                  <option value="4">4环</option><option value="5">5环</option><option value="6">6环</option><option value="7">7环</option>
+                  <option value="8">8环</option><option value="9">9环</option>
+                </select>
+                <button class="btn btn-sm btn-primary" id="btnAddCustomSpell">＋ 添加</button>
+              </div>
+              <input type="text" id="cs_desc" placeholder="作用描述（如：5尺锥形冰霜，目标敏捷豁免失败受 3d8 冷冻伤害并减速）" style="width:100%;margin-bottom:6px;">
+              <div class="chip-row" id="customSpellChips"></div>
             </div>
           </div>
           <div id="wzCocClass" class="hidden">
@@ -1323,7 +1413,8 @@ details.lsec .lsec-bd th { background:var(--hover); }
       </div>
       <div class="tabbar" id="advTypeTabs">
         <button class="tb active" data-type="all">全部</button>
-        <button class="tb" data-type="trpg">⚔️ TRPG 跑团</button>
+        <button class="tb" data-type="dnd5e">⚔️ DND</button>
+        <button class="tb" data-type="coc7">🕯️ COC</button>
         <button class="tb" data-type="script">🕵️ 剧本杀</button>
         <button class="tb" data-type="galgame">💕 文字 Galgame</button>
       </div>
@@ -1436,15 +1527,8 @@ details.lsec .lsec-bd th { background:var(--hover); }
       </div>
       <div class="grid grid-2">
         <div class="card">
-          <div class="card-hd"><h3>📋 生成提示词模板</h3><span class="hint">选择要生成的内容，复制提示词发给任意 AI，或用右侧对话口直接生成</span></div>
-          <div class="tabbar" id="genTabs">
-            <button class="tb active" data-gen="dnd">⚔️ D&D 团本</button>
-            <button class="tb" data-gen="coc">🕯️ COC 团本</button>
-            <button class="tb" data-gen="script">🕵️ 剧本杀</button>
-            <button class="tb" data-gen="galgame">💕 Galgame</button>
-            <button class="tb" data-gen="char">🧙 角色卡</button>
-            <button class="tb" data-gen="txt">📄 TXT剧本</button>
-          </div>
+          <div class="card-hd"><h3>📋 生成提示词模板</h3><span class="hint">团本·剧本 / 角色卡 分模块，选择后复制提示词发给任意 AI，或用右侧对话口直接生成</span></div>
+          <div id="genTabs" class="tabbar"></div>
           <div id="genTemplateBox"></div>
         </div>
         <div class="card">
@@ -1563,7 +1647,7 @@ details.lsec .lsec-bd th { background:var(--hover); }
           <div class="fg"><label>API Key</label><input type="password" id="apiKeyInput" placeholder="sk-... 留空=本地演示模式"></div>
           <div class="fg"><label>接口地址</label><input type="text" id="apiEndpoint" placeholder="https://api.deepseek.com/v1/chat/completions"></div>
           <div class="fr">
-            <div class="fg"><label>模型</label><input type="text" id="apiModel" placeholder="deepseek-chat"></div>
+            <div class="fg"><label>模型</label><input type="text" id="apiModel" placeholder="deepseek-v4-flash"></div>
             <div class="fg"><label>温度（创造度）</label><input type="number" id="apiTemp" value="0.9" min="0" max="2" step="0.1"></div>
           </div>
           <div class="flex gap8">
@@ -1760,7 +1844,7 @@ details.lsec .lsec-bd th { background:var(--hover); }
 /* ---------------- 常量 ---------------- */
 const PREFIX = 'tavern2_';
 const DEFAULT_ENDPOINT = 'https://api.deepseek.com/v1/chat/completions';
-const DEFAULT_MODEL = 'deepseek-chat';
+const DEFAULT_MODEL = 'deepseek-v4-flash';
 
 /* ---------------- 全局状态 ---------------- */
 const S = {
@@ -2075,16 +2159,61 @@ const DND_SKILLS = [
   {n:'驯兽',a:'wis'},{n:'洞察',a:'wis'},{n:'医药',a:'wis'},{n:'察觉',a:'wis'},{n:'生存',a:'wis'},
   {n:'欺瞒',a:'cha'},{n:'威吓',a:'cha'},{n:'表演',a:'cha'},{n:'说服',a:'cha'},
 ];
+/* PHB 种族数据（数据源自《5E不全书》：属性修正/速度/语言/暗视/特质/亚种/阵营倾向） */
 const DND_RACES = {
-  '人类': {mods:{str:1,dex:1,con:1,int:1,wis:1,cha:1}, desc:'全属性+1，多面手'},
-  '精灵': {mods:{dex:2}, desc:'敏捷+2，暗视，妖精血统'},
-  '矮人': {mods:{con:2}, desc:'体质+2，石之坚韧'},
-  '半精灵': {mods:{cha:2}, desc:'魅力+2，任意两项+1'},
-  '半兽人': {mods:{str:2,con:1}, desc:'力量+2 体质+1'},
-  '侏儒': {mods:{int:2}, desc:'智力+2'},
-  '半身人': {mods:{dex:2}, desc:'敏捷+2，幸运'},
-  '龙裔': {mods:{str:2,cha:1}, desc:'力量+2 魅力+1'},
+  '人类': {mods:{str:1,dex:1,con:1,int:1,wis:1,cha:1}, speed:30, langs:['通用语','再选1门'], darkvision:0, align:'任意',
+    traits:['全属性+1','额外1个技能熟练','额外1个专长'], desc:'适应性最强，各属性均衡', subraces:[]},
+  '精灵': {mods:{dex:2}, speed:30, langs:['通用语','精灵语'], darkvision:60, align:'多倾向混乱',
+    traits:['暗视60尺','妖精血统（魅惑豁免优势）','对睡眠魔法免疫','感知检定优势'], desc:'优雅、长寿、亲近魔法与自然', subraces:[
+      {name:'高等精灵', mods:{int:1}, traits:['额外1个戏法','长剑/短剑/长弓/短弓熟练']},
+      {name:'木精灵', mods:{wis:1}, traits:['移动速度35尺','隐匿时可在自然环境中藏身','长剑/短剑/长弓/短弓熟练']},
+      {name:'黑暗精灵（卓尔）', mods:{cha:1}, traits:['暗视120尺','阳光敏感','妖精魔法（黑暗术等）','短剑/细剑/手弩熟练']}
+    ]},
+  '矮人': {mods:{con:2}, speed:25, langs:['通用语','矮人语'], darkvision:60, align:'多倾向守序',
+    traits:['暗视60尺','矮人坚韧（毒素豁免优势）','石之诡术','对石质历史洞察检定优势'], desc:'坚韧、忠诚、擅长锻造', subraces:[
+      {name:'丘陵矮人', mods:{wis:1}, traits:['生命上限+1，此后每级再+1']},
+      {name:'山地矮人', mods:{str:2}, traits:['重甲熟练']}
+    ]},
+  '半精灵': {mods:{cha:2}, speed:30, langs:['通用语','精灵语','再选1门'], darkvision:60, align:'任意',
+    traits:['暗视60尺','妖精血统（魅惑豁免优势）','额外两项属性+1（自选）','精灵先祖'], desc:'人类与精灵的后裔，游走于两个世界', subraces:[]},
+  '半兽人': {mods:{str:2,con:1}, speed:30, langs:['通用语','兽人语'], darkvision:60, align:'多倾向混乱',
+    traits:['暗视60尺','凶蛮耐性（濒死时保持1点生命）','残暴攻击（重击伤害骰额外+1）','恐吓熟练'], desc:'力量与耐力的化身', subraces:[]},
+  '侏儒': {mods:{int:2}, speed:25, langs:['通用语','侏儒语'], darkvision:60, align:'多倾向善良',
+    traits:['暗视60尺','侏儒诡计（智力豁免优势）'], desc:'小巧、好奇、热爱机关', subraces:[
+      {name:'森林侏儒', mods:{dex:1}, traits:['天生幻术（可与小动物交流）']},
+      {name:'岩石侏儒', mods:{con:1}, traits:['工匠知识（历史检定双倍熟练）','发明家（小型机械装置）']}
+    ]},
+  '半身人': {mods:{dex:2}, speed:25, langs:['通用语','半身人语'], darkvision:0, align:'多倾向守序',
+    traits:['幸运（d20掷出1可重掷）','勇敢（恐惧豁免优势）','灵巧（可穿过大型生物空间）'], desc:'好运、勇敢、热爱美食', subraces:[
+      {name:'轻足半身人', mods:{cha:1}, traits:['轻足隐匿（可藏身于体型更大的生物身后）']},
+      {name:'强壮半身人', mods:{con:1}, traits:['强壮耐性（毒素豁免优势）']}
+    ]},
+  '龙裔': {mods:{str:2,cha:1}, speed:30, langs:['通用语','龙语'], darkvision:0, align:'多倾向守序',
+    traits:['龙族血统（喷吐武器）','伤害抗性（按血统）'], desc:'龙的后裔，喷吐与抗性随血统', subraces:[
+      {name:'黑龙', mods:{}, traits:['喷吐武器：5×30尺直线强酸','强酸抗性']},
+      {name:'蓝龙', mods:{}, traits:['喷吐武器：5×30尺直线闪电','闪电抗性']},
+      {name:'绿龙', mods:{}, traits:['喷吐武器：15尺锥形毒素','毒素抗性']},
+      {name:'红龙', mods:{}, traits:['喷吐武器：15尺锥形火焰','火焰抗性']},
+      {name:'白龙', mods:{}, traits:['喷吐武器：15尺锥形冷冻','冷冻抗性']},
+      {name:'黄铜龙', mods:{}, traits:['喷吐武器：5×30尺直线火焰','火焰抗性']},
+      {name:'青铜龙', mods:{}, traits:['喷吐武器：5×30尺直线闪电','闪电抗性']},
+      {name:'赤铜龙', mods:{}, traits:['喷吐武器：5×30尺直线强酸','强酸抗性']},
+      {name:'金龙', mods:{}, traits:['喷吐武器：15尺锥形火焰','火焰抗性']},
+      {name:'银龙', mods:{}, traits:['喷吐武器：15尺锥形冷冻','冷冻抗性']}
+    ]},
+  '提夫林': {mods:{cha:2,int:1}, speed:30, langs:['通用语','炼狱语'], darkvision:60, align:'多倾向混乱',
+    traits:['暗视60尺','地狱抗性（火焰抗性）','地狱遗产（黑暗术）'], desc:'带炼狱血脉的异族', subraces:[]},
 };
+/** 种族修正（含亚种）：返回 str/dex/con/int/wis/cha 的修正值 */
+function dndRaceMods(race, subrace){
+  const r = DND_RACES[race];
+  const m = {str:0,dex:0,con:0,int:0,wis:0,cha:0};
+  if(!r) return m;
+  Object.assign(m, r.mods);
+  const sr = (r.subraces||[]).find(x=>x.name===subrace);
+  if(sr) Object.assign(m, sr.mods);
+  return m;
+}
 const DND_CLASSES = {
   '战士': {hd:10, saves:['str','con'], skillCount:2, skills:['运动','杂技','驯兽','历史','洞察','恐吓','察觉','生存'],
     spells:null, armor:'all', weapons:'simple+martial'},
@@ -2207,6 +2336,7 @@ const RACE_AGE = {
   '侏儒':   {max:450, bands:[[1,39,'少年'],[40,99,'青年'],[100,299,'成年'],[300,450,'老年']]},
   '半身人': {max:150, bands:[[1,19,'少年'],[20,49,'青年'],[50,119,'成年'],[120,150,'老年']]},
   '龙裔':   {max:80,  bands:[[1,9,'少年'],[10,19,'青年'],[20,49,'成年'],[50,80,'老年']]},
+  '提夫林': {max:100, bands:[[1,9,'少年'],[10,19,'青年'],[20,59,'成年'],[60,100,'老年']]},
 };
 const COC_AGE_BANDS = [[6,11,'儿童'],[12,14,'少年'],[15,19,'青少年'],[20,39,'青年'],[40,49,'中年'],[50,59,'中老年'],[60,69,'老年'],[70,120,'高龄']];
 /** 解析年龄显示值 → 数值（支持 "30-50" 取中值、"忘了" 取空、"20" 取20） */
@@ -2393,18 +2523,6 @@ const LV_CN = ['戏法','1环','2环','3环','4环','5环','6环','7环','8环',
 /* ---------------- DND 计算函数 ---------------- */
 function abilityMod(v){ return Math.floor((v-10)/2); }
 function profBonus(lv){ return Math.floor((lv-1)/4)+2; }   // 1-4:+2 5-8:+3 9-12:+4 13-16:+5 17-20:+6
-function dndRaceMods(race){
-  const r = DND_RACES[race];
-  const m = {str:0,dex:0,con:0,int:0,wis:0,cha:0};
-  if(!r) return m;
-  if(race==='半精灵'){
-    // 半精灵: 魅力+2, 另两项+1 (取属性最高的两项自动应用)
-    const order = ['str','dex','con','int','wis','cha'].sort((a,b)=>0);
-    return {str:0,dex:0,con:0,int:0,wis:0,cha:2};
-  }
-  Object.assign(m, r.mods);
-  return m;
-}
 /** 获取职业在指定等级可用的最高法术环 */
 function maxSpellLevel(cls, lv, customCaster){
   const cfg = DND_CLASSES[cls]; if(!cfg && customCaster){
@@ -2474,9 +2592,34 @@ function dndCalc(c){
     spellDC = 8 + pb + castMod; spellAtk = pb + castMod;
   }
   const slots = spellSlots(cls, lv, customCaster);
+  // 兼职（简化规则：副职业等级 = 主职业等级）：副职业技能池与武器/护甲熟练项合并
+  const cls2 = c.class2 || '';
+  const cfg2 = DND_CLASSES[cls2] || null;
+  const skillPool = Array.from(new Set([...(cfg.skills||[]), ...(cfg2?.skills||[])]));
+  // 熟练项（护甲/武器）：主+副取更全
+  const profArmor = Array.from(new Set([...(profsFromArmor(cfg.armor)), ...(cfg2?profsFromArmor(cfg2.armor):[])]));
+  const profWeapons = Array.from(new Set([...(profsFromWeapons(cfg.weapons)), ...(cfg2?profsFromWeapons(cfg2.weapons):[])]));
   return { mods, pb, saves, skills, ac, hpMax, hd, cfg, spellDC, spellAtk, castMod, castAbil,
            slots, maxLv: maxSpellLevel(cls, lv, customCaster), known: knownLimit(cls, lv, castMod||0, customCaster),
-           cantripMax: customCaster ? (lv>=10?5:4) : cantripLimit(cls, lv), isCustomClass, customCaster };
+           cantripMax: customCaster ? (lv>=10?5:4) : cantripLimit(cls, lv), isCustomClass, customCaster,
+           class2: cfg2, skillPool, profArmor, profWeapons };
+}
+/* 护甲熟练项解析：'none'/'light'/'light+中甲'/'all' → 熟练列表 */
+function profsFromArmor(s){
+  const a = String(s||'');
+  if(a==='none'||!a) return [];
+  if(a==='all') return ['轻甲','中甲','重甲','盾牌'];
+  return a.split('+').map(x=>x==='light'?'轻甲':x==='中甲'?'中甲':x==='heavy'?'重甲':x);
+}
+/* 武器熟练项解析：'simple'/'simple+martial'/'simple+刺剑+短弓+手弩' → 熟练列表 */
+function profsFromWeapons(s){
+  const w = String(s||'');
+  if(!w) return [];
+  const out = [];
+  if(w.includes('simple')) out.push('简易武器');
+  if(w.includes('martial')) out.push('军用武器');
+  w.split('+').forEach(x=>{ if(x!=='simple'&&x!=='martial'&&x) out.push(x); });
+  return out;
 }
 
 /* ---------------- 角色 CRUD ---------------- */
@@ -2485,11 +2628,11 @@ function saveChars(){ lsSet('characters', S.characters); }
 function findChar(id){ return S.characters.find(x=>x.id===id); }
 function defaultChar(){
   return { id:uid(), name:'', player:'', system:'dnd5e', status:'alive', avatar:'🧙', gender:'',
-    race:'人类', class:'战士', level:1, xp:0, age:'20', ageNum:null, credit:'',
+    race:'人类', subrace:'', class:'战士', class2:'', alignment:'', level:1, xp:0, age:'20', ageNum:null, credit:'',
     stats:{str:10,dex:10,con:10,int:10,wis:10,cha:10},
     statsBase:{}, // 分配前的原始值（含购点/掷骰结果），种族加值在此之上
     hpMax:0, hpCur:null, tempHp:0, deathSaves:{s:0,f:0},
-    skills:[], spells:[], weapons:[], armor:'无甲', shield:'', acNote:'',
+    skills:[], spells:[], customSpells:[], profs:{armor:[],weapons:[],tools:[]}, weapons:[], armor:'无甲', shield:'', acNote:'',
     subclass:'', feats:[], customCaster:false, customCastAbil:'int',
     items:'', pets:'', property:'', money:{gold:0,silver:0,copper:0,other:''},
     bio:'', personality:'', ideal:'', bond:'', flaw:'',
@@ -2705,15 +2848,18 @@ function charSheetHtml(c){
       <div class="dr"><span>豁免（擅长加粗）</span><b>${['str','dex','con','int','wis','cha'].map(k=>`${ABILITY_CN[k][0]}${d.saves[k]>=0?'+':''}${d.saves[k]}`).join(' ')}</b></div>
     </div>
     <div class="fg mt8"><label>技能</label><div class="chip-row">${DND_SKILLS.map(s=>`<span class="chip ${(c.skills||[]).includes(s.n)?'active':''}">${s.n} ${d.skills[s.n]>=0?'+':''}${d.skills[s.n]}</span>`).join('')}</div></div>
-    ${(c.subclass||(c.feats||[]).length)?`<div class="fg mt8"><label>职业成长</label><div class="chip-row">
+    ${(c.subclass||(c.feats||[]).length||c.class2)?`<div class="fg mt8"><label>职业成长</label><div class="chip-row">
       ${c.subclass?`<span class="chip" title="${SUBCLASS_NOTES[c.subclass]?esc(SUBCLASS_NOTES[c.subclass]):'自定义子职业'}">🏅 ${esc(c.subclass)}</span>`:''}
+      ${c.class2?`<span class="chip" title="兼职（简化：副职业等级=主等级）">🔗 兼职 ${esc(c.class2)}</span>`:''}
       ${(c.feats||[]).map(f=>`<span class="chip" title="${(DND_FEATS.find(x=>x.n===f)||{}).d?esc(DND_FEATS.find(x=>x.n===f).d):''}">⭐ ${esc(f)}</span>`).join('')}
     </div></div>`:''}
-    ${(c.spells&&c.spells.length)?(()=>{
+    ${(()=>{ const profs = c.profs||{}; const pt = [...(profs.armor||[]),...(profs.weapons||[]),...(profs.tools||[])]; return pt.length?`<div class="fg mt8"><label>熟练项</label><div class="chip-row">${pt.map(x=>`<span class="chip">🛠️ ${esc(x)}</span>`).join('')}</div></div>`:''; })()}
+    ${(c.spells&&c.spells.length)||(c.customSpells&&c.customSpells.length)?(()=>{
       const cant = c.spells.filter(sn=>{const sp=SPELLS.find(x=>x.n===sn); return sp&&sp.lv===0;});
       const lev = c.spells.filter(sn=>{const sp=SPELLS.find(x=>x.n===sn); return sp&&sp.lv>0;});
-      return `<div class="fg mt8"><label>法术（${cant.length} 戏法 / ${lev.length} 法术）</label>
-        <div class="chip-row">${cant.map(sn=>`<span class="chip spell">🎩 ${esc(sn)}</span>`).join('')}${lev.map(sn=>{const sp=SPELLS.find(x=>x.n===sn); return `<span class="chip spell">${sp?LV_CN[sp.lv]+'·':''}${esc(sn)}</span>`;}).join('')}</div></div>`;
+      const cus = c.customSpells||[];
+      return `<div class="fg mt8"><label>法术（${cant.length+cus.filter(s=>s.lv===0).length} 戏法 / ${lev.length+cus.filter(s=>s.lv>0).length} 法术）</label>
+        <div class="chip-row">${cant.map(sn=>`<span class="chip spell">🎩 ${esc(sn)}</span>`).join('')}${cus.filter(s=>s.lv===0).map(s=>`<span class="chip spell" title="${esc(s.d||'')}">✨🎩 ${esc(s.n)}</span>`).join('')}${lev.map(sn=>{const sp=SPELLS.find(x=>x.n===sn); return `<span class="chip spell">${sp?LV_CN[sp.lv]+'·':''}${esc(sn)}</span>`;}).join('')}${cus.filter(s=>s.lv>0).map(s=>`<span class="chip spell" title="${esc(s.d||'')}">✨${LV_CN[s.lv]||s.lv}·${esc(s.n)}</span>`).join('')}</div></div>`;
     })():''}`;
   } else if(coc){
     const d = cocCalc(c);
@@ -2733,7 +2879,7 @@ function charSheetHtml(c){
       <div class="dr"><span>伤害加值 DB</span><b>${d.db}</b></div>
       <div class="dr"><span>体格 Bld</span><b>${d.bld}</b></div>
       <div class="dr"><span>移动 MOV</span><b>${d.mov}</b></div>
-      <div class="dr"><span>信用评级</span><b>${c.credit||'—'}</b></div>
+      <div class="dr"><span>信用评级</span><b>${c.creditRange||c.credit||'—'}</b></div>
     </div>
     <div class="fg mt8"><label>技能（★=本职技能）</label>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 10px;font-size:12.5px;">
@@ -2766,7 +2912,7 @@ function charSheetHtml(c){
     <div class="avatar-lg">${esc(c.avatar||'🧙')}</div>
     <div>
       <div class="bold" style="font-size:17px;">${esc(c.name)} <span class="tag ${c.status==='dead'?'tag-bad':'tag-ok'}">${c.status==='dead'?'💀 已死亡':'✦ 存活'}</span></div>
-      <div class="small muted">${dnd?`${esc(c.race)} ${esc(c.class)} Lv${c.level}${c.age?` · 年龄 ${esc(String(c.age))}`:''} · ${c.player?esc(c.player)+' 的':'无主'}角色`:coc?`${esc(c.class)} · ${esc(c.race||'调查员')} · 年龄 ${esc(String(c.age))}`:`${esc(c.race||'')} ${esc(c.class||'')} Lv${c.level}${c.age?` · 年龄 ${esc(String(c.age))}`:''}`}${c.gender?` · 性别 ${esc(c.gender)}`:''}</div>
+      <div class="small muted">${dnd?`${esc(c.race)}${c.subrace?'（'+esc(c.subrace)+'）':''} ${esc(c.class)}${c.class2?' + '+esc(c.class2):''} Lv${c.level}${c.alignment?` · ${esc(c.alignment)}`:''}${c.age?` · 年龄 ${esc(String(c.age))}`:''} · ${c.player?esc(c.player)+' 的':'无主'}角色`:coc?`${esc(c.class)} · ${esc(c.race||'调查员')} · 年龄 ${esc(String(c.age))}`:`${esc(c.race||'')} ${esc(c.class||'')} Lv${c.level}${c.age?` · 年龄 ${esc(String(c.age))}`:''}`}${c.gender?` · 性别 ${esc(c.gender)}`:''}</div>
       ${c.xp?`<div class="small muted">经验 ${c.xp} XP</div>`:''}
     </div>
   </div>
@@ -3145,6 +3291,11 @@ const COC_AGE_MODS = {
   '60': {str:-15,con:-15,dex:-10,edu:10,app:-15, luck:'1d6×5'},
   '70': {str:-20,con:-20,dex:-15,edu:10,app:-20, luck:'1d6×5'},
 };
+/* 属性官方掷骰公式的合法范围：3d6×5 → 15~90；(2d6+6)×5 → 40~90；幸运 3d6×5 → 15~90（单独掷骰） */
+const COC_ATTR_RANGES = {
+  str:[15,90], con:[15,90], siz:[40,90], dex:[15,90],
+  app:[15,90], int:[40,90], pow:[15,90], edu:[40,90], luck:[15,90]
+};
 /* DB/体格查表 (STR+SIZ -> DB, 体格) */
 const COC_DB_TABLE = [
   [2,64,'-2','-2'],[65,84,'-1','-1'],[85,124,'0','0'],[125,164,'+1D4','1'],[165,204,'+1D6','2'],
@@ -3160,8 +3311,10 @@ function cocCalc(c){
   const hp = Math.floor((con+siz)/10);   // 官方7版: (CON+SIZ)/10 向下取整
   const mp = pow;                        // 官方7版: MP=POW
   const san = pow;                       // 官方7版: SAN 初始=POW
+  // 官方7版: SAN 上限 = 99 − 克苏鲁神话技能值（克苏鲁神话技能当前未实现，恒为 0，故上限为 99；若未来加入克苏鲁神话技能，需在此同步下调 maxSan）
   const maxSan = 99;
-  const luck = c.luck ?? 50;
+  // 幸运统一以顶层 c.luck 为准；兼容个别旧存档把幸运写在 stats.luck 里的情况
+  const luck = c.stats?.luck ?? c.luck ?? 50;
   const sum = str+siz;
   let db='0', bld='0';
   for(const [lo,hi,d,b] of COC_DB_TABLE){ if(sum>=lo && sum<=hi){ db=d; bld=b; break; } }
@@ -3174,7 +3327,9 @@ function cocCalc(c){
   const occ = COC_OCCUPATIONS[c.class] || {pts:'EDU×2'};
   const occPts = occPtsCalc(occ.pts, {edu, str, dex, app, int});
   const intPts = int*2;
-  return {hp, mp, san, maxSan, luck, db, bld, mov, occPts, intPts, occSkills: occ.skills||[]};
+  // 官方规则：信用评级恒为本职业技能（229 职业数据里个别职业未列出，统一补上，保证职业点有合法去向）
+  const occSkills = Array.from(new Set([...(occ.skills||[]), '信用评级']));
+  return {hp, mp, san, maxSan, luck, db, bld, mov, occPts, intPts, occSkills};
 }
 /** 职业点计算：解析官方公式（EDU*4 / EDU*2+DEX*2 / EDU*2+MAX(STR|DEX)*2 等，"或"=取两者较高） */
 function occPtsCalc(formula, v){
@@ -3279,16 +3434,38 @@ function wizSyncBasic(){
   if(sys==='dnd5e'){
     const r = $('#cf_race').value;
     W.race = r==='自定义' ? ($('#cf_race_custom_dnd').value.trim()||'自定义种族') : r;
+    W.subrace = $('#cf_subrace').value || '';
+    W.alignment = $('#cf_alignment').value || '';
     const cl = $('#cf_class').value;
     W.class = cl==='自定义' ? ($('#cf_class_custom_dnd').value.trim()||'自定义职业') : cl;
+    W.class2 = $('#cf_class2').value || '';
     W.level = parseInt($('#cf_level').value)||1; W.xp = parseInt($('#cf_xp').value)||0;
   }
   else if(sys==='coc7'){
     const occ = $('#cf_coc_occ').value;
-    W.class = occ==='自定义' ? ($('#cf_coc_occ_custom').value.trim()||'自定义职业') : occ;
+    if(occ==='自定义'){
+      // 职业名：自定义输入框 优先，其次搜索栏（兼输入栏）里的内容
+      W.class = $('#cf_coc_occ_custom').value.trim() || $('#coc_occ_search').value.trim() || '自定义职业';
+    } else {
+      W.class = occ;
+    }
+    // 自定义职业的信用评级范围：手动输入，格式 10-30，限定 0-99（官方职业由官方表提供，不在此处理）
+    const cr = String($('#cf_credit_custom').value||'').trim();
+    const cm = cr.match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
+    if(cm){
+      const lo=+cm[1], hi=+cm[2];
+      if(lo>=0&&lo<=99&&hi>=0&&hi<=99&&lo<=hi) W.creditRange = `${lo}-${hi}`;
+    }
     // 年龄由 renderAgeBox 独立维护（年龄段/自定义/忘了/掷骰），这里不再读取旧 select
   }
-  else { W.race = $('#cf_race_custom').value.trim()||'自定义'; W.class = $('#cf_class_custom').value.trim()||'自定义'; W.level = parseInt($('#cf_level_custom').value)||1; }
+  else {
+    // 自定义 / MOD：按 MOD basic 配置读取字段（隐藏的字段保留草稿原值，避免被覆盖成"自定义"）
+    const modMs = String(sys).startsWith('mod:') ? (S.modSystems||[]).find(x=>x.id===sys) : null;
+    const basic = modMs?.basic || {race:true, class:true, level:true};
+    if(basic.race) W.race = $('#cf_race_custom').value.trim()||'自定义';
+    if(basic.class) W.class = $('#cf_class_custom').value.trim()||'自定义';
+    if(basic.level) W.level = parseInt($('#cf_level_custom').value)||1;
+  }
   // 中途切换系统：重置属性/技能/法术，避免脏数据
   if(prevSys && prevSys!==sys){
     W.stats = defaultChar().stats; W.statsBase = clone(W.stats);
@@ -3315,6 +3492,16 @@ function wizRender(step){
 }
 
 /* ---------- 第1步: 基础信息 ---------- */
+let _cocOccFilter = '';   // COC 职业搜索关键词（向导重绘后保留）
+/** COC 职业下拉过滤：按关键词隐藏不匹配的 option（"自定义"选项始终可见） */
+function applyCocOccFilter(kw){
+  const occSel = $('#cf_coc_occ'); if(!occSel) return;
+  kw = String(kw||'').trim().toLowerCase();
+  Array.from(occSel.options||[]).forEach(opt=>{
+    if(opt.value==='自定义'){ opt.style.display = ''; return; }
+    opt.style.display = (!kw || opt.text.toLowerCase().includes(kw)) ? '' : 'none';
+  });
+}
 function wizRenderStep1(){
   const sys = W.system;
   S.wizSystem = sys;
@@ -3350,24 +3537,89 @@ function wizRenderStep1(){
     const raceOpts = Array.from($('#cf_race').options||[]).map(o=>o.value);
     if(raceOpts.includes(W.race)){ $('#cf_race').value = W.race; $('#cf_race_custom_dnd').classList.add('hidden'); }
     else { $('#cf_race').value = '自定义'; $('#cf_race_custom_dnd').classList.remove('hidden'); $('#cf_race_custom_dnd').value = W.race; }
+    // 亚种：按种族动态填充（精灵/矮人/侏儒/半身人/龙裔）
+    const subSel = $('#cf_subrace');
+    const rc = DND_RACES[W.race];
+    const subs = (rc?.subraces||[]).map(s=>s.name);
+    if(subs.length){
+      subSel.classList.remove('hidden');
+      subSel.innerHTML = '<option value="">（不选亚种 / 默认）</option>' + subs.map(s=>`<option ${s===W.subrace?'selected':''}>${s}</option>`).join('');
+      subSel.onchange = ()=>{ W.subrace = subSel.value||''; wizSyncBasic(); wizRender(S.wizStep); };
+    } else {
+      subSel.classList.add('hidden');
+      if(!DND_RACES[W.race]) W.subrace = '';
+    }
+    updateRaceInfo();   // 速度/语言/暗视/特质/阵营倾向信息卡
+    // 阵营倾向回填
+    $('#cf_alignment').value = W.alignment || '';
+    // 种族搜索过滤（静态 option，直接显隐；重绘不重建，过滤状态保留）
+    const raceSearch = $('#cf_race_search');
+    if(raceSearch){
+      raceSearch.oninput = ()=>{
+        const kw = raceSearch.value.trim().toLowerCase();
+        Array.from($('#cf_race').options||[]).forEach(opt=>{
+          if(opt.value==='自定义'){ opt.style.display=''; return; }
+          opt.style.display = (!kw || opt.text.toLowerCase().includes(kw)) ? '' : 'none';
+        });
+      };
+    }
     const clsOpts = Array.from($('#cf_class').options||[]).map(o=>o.value);
     if(clsOpts.includes(W.class)){ $('#cf_class').value = W.class; $('#cf_class_custom_dnd').classList.add('hidden'); }
     else { $('#cf_class').value = '自定义'; $('#cf_class_custom_dnd').classList.remove('hidden'); $('#cf_class_custom_dnd').value = W.class; }
+    // 兼职副职业回填
+    const cls2 = $('#cf_class2');
+    if(cls2){
+      cls2.value = W.class2 || '';
+      cls2.onchange = ()=>{ W.class2 = cls2.value||''; wizSyncBasic(); wizRender(S.wizStep); };
+    }
+    // 职业搜索过滤（静态 option，直接显隐；重绘不重建，过滤状态保留）
+    const clsSearch = $('#cf_class_search');
+    if(clsSearch){
+      clsSearch.oninput = ()=>{
+        const kw = clsSearch.value.trim().toLowerCase();
+        Array.from($('#cf_class').options||[]).forEach(opt=>{
+          if(opt.value==='自定义'){ opt.style.display=''; return; }
+          opt.style.display = (!kw || opt.text.toLowerCase().includes(kw)) ? '' : 'none';
+        });
+      };
+    }
     $('#cf_level').value = W.level||1; $('#cf_xp').value = W.xp||0;
   }
   if(coc){
     const sel = $('#cf_coc_occ');
-    sel.innerHTML = Object.keys(COC_OCCUPATIONS).map(o=>`<option ${o===W.class?'selected':''}>${o}</option>`).join('') + `<option value="自定义" ${!COC_OCCUPATIONS[W.class]?'selected':''}>🧩 自定义…</option>`;
-    if(COC_OCCUPATIONS[W.class]){ $('#cf_coc_occ_custom').classList.add('hidden'); }
-    else { $('#cf_coc_occ_custom').classList.remove('hidden'); $('#cf_coc_occ_custom').value = W.class; }
-    const occ = COC_OCCUPATIONS[sel.value] || Object.values(COC_OCCUPATIONS)[0] || {pts:'EDU*4', credit:'9-30'};
-    $('#cf_credit').value = occ.credit + ' · 点数 ' + occPtsDisplay(occ.pts);
+    const search = $('#coc_occ_search');
+    const custom = $('#cf_coc_occ_custom');
+    const creditCustom = $('#cf_credit_custom');
+    const isOfficial = !!COC_OCCUPATIONS[W.class];
+    // 职业下拉：全部官方职业 + 自定义
+    sel.innerHTML = Object.keys(COC_OCCUPATIONS).map(o=>`<option ${o===W.class?'selected':''}>${o}</option>`).join('') + `<option value="自定义" ${!isOfficial?'selected':''}>🧩 自定义…</option>`;
+    // 搜索栏回填：显示当前所选职业（官方职业名 或 自定义职业名），避免玩家遗忘自己选了什么
+    search.value = isOfficial ? W.class : (W.class && W.class!=='自定义职业' ? W.class : (_cocOccFilter||''));
+    if(isOfficial){
+      custom.classList.add('hidden');
+      creditCustom.classList.add('hidden');
+      applyCocOccFilter(W.class);          // 已选定官方职业：列表收敛为「该职业 + 自定义」
+    } else {
+      custom.classList.remove('hidden');
+      custom.value = (W.class && W.class!=='自定义职业') ? W.class : '';
+      creditCustom.classList.remove('hidden');   // 自定义职业：信用评级范围手动填写
+      if(!creditCustom.value) creditCustom.value = W.creditRange || '10-30';
+      applyCocOccFilter('');
+    }
+    updateCreditUI();
   }
   renderAgeBox();
   if(!dnd&&!coc){
-    $('#cf_race_custom').value = (W.race==='未知'||W.race==='自定义')?'':W.race;
-    $('#cf_class_custom').value = (W.class==='未知'||W.class==='自定义')?'':W.class;
-    $('#cf_level_custom').value = W.level||1;
+    // 自定义 / MOD 规则：基础信息按 MOD 的 basic 配置差异化显隐（有的 MOD 不需要种族/职业/等级）
+    const modMs = modSys ? (S.modSystems||[]).find(x=>x.id===sys) : null;
+    const basic = modMs?.basic || {race:true, class:true, level:true};
+    const rf = $('#cf_race_custom_fg'), cf = $('#cf_class_custom_fg'), lf = $('#cf_level_custom_fg');
+    if(rf) rf.style.display = basic.race ? '' : 'none';
+    if(cf) cf.style.display = basic.class ? '' : 'none';
+    if(lf) lf.style.display = basic.level ? '' : 'none';
+    if(basic.race) $('#cf_race_custom').value = (W.race==='未知'||W.race==='自定义')?'':W.race;
+    if(basic.class) $('#cf_class_custom').value = (W.class==='未知'||W.class==='自定义')?'':W.class;
+    if(basic.level) $('#cf_level_custom').value = W.level||1;
   }
   // 任何基础字段变更 → 立即同步草稿并重绘当前步骤
   const syncAndRerender = ()=> { wizSyncBasic(); wizRender(S.wizStep); };
@@ -3379,9 +3631,104 @@ function wizRenderStep1(){
   $('#cf_gender_custom').oninput = ()=>{ if($('#cf_gender').value==='自定义'){ W.gender = $('#cf_gender_custom').value.trim()||'自定义'; } };
   $('#cf_name').oninput = ()=>{ W.name = $('#cf_name').value.trim(); };
   $('#cf_player').oninput = ()=>{ W.player = $('#cf_player').value.trim(); };
+  // COC 职业：搜索栏兼做输入/选择栏（覆盖上面的通用 onchange，先同步草稿再重绘，保持过滤状态）
+  if(coc){
+    const sel = $('#cf_coc_occ');
+    const search = $('#coc_occ_search');
+    const custom = $('#cf_coc_occ_custom');
+    const creditCustom = $('#cf_credit_custom');
+    const rerender = ()=>{ wizSyncBasic(); wizRender(S.wizStep); };
+    // 搜索栏输入：过滤列表；输入完整官方职业名 → 直接选中；输入非官方名 → 归为自定义职业
+    // 注意：oninput 内【不能整体重绘】（否则输入框焦点会丢失），只做过滤与显隐联动
+    search.oninput = ()=>{
+      _cocOccFilter = search.value;
+      const kw = search.value.trim();
+      const hit = kw && COC_OCCUPATIONS[kw];
+      applyCocOccFilter(kw);
+      if(hit){
+        sel.value = kw;
+        custom.classList.add('hidden');
+        creditCustom.classList.add('hidden');
+      } else if(kw){
+        sel.value = '自定义';
+        custom.classList.remove('hidden');
+        custom.value = kw;
+        creditCustom.classList.remove('hidden');
+        if(!creditCustom.value.trim()) creditCustom.value = W.creditRange || '10-30';
+      } else {
+        custom.classList.add('hidden');
+        creditCustom.classList.add('hidden');
+      }
+      updateCreditUI();
+      wizSyncBasic();
+    };
+    // 职业下拉选择：搜索栏同步显示所选职业，列表收敛为「该职业 + 自定义」
+    sel.onchange = ()=>{
+      if(sel.value==='自定义'){
+        custom.classList.remove('hidden'); custom.focus();
+        creditCustom.classList.remove('hidden');
+        if(!creditCustom.value.trim()) creditCustom.value = W.creditRange || '10-30';
+        search.value = custom.value.trim() || _cocOccFilter || '';
+      } else {
+        search.value = sel.value;
+        _cocOccFilter = sel.value;
+        applyCocOccFilter(sel.value);
+        custom.classList.add('hidden');
+        creditCustom.classList.add('hidden');
+      }
+      updateCreditUI();
+      rerender();
+    };
+    // 自定义职业名输入：搜索栏同步
+    custom.oninput = ()=>{ search.value = custom.value; _cocOccFilter = custom.value; wizSyncBasic(); };
+    // 自定义职业的信用评级范围（手动输入，格式 10-30，限定 0-99）
+    creditCustom.oninput = ()=>{
+      const v = creditCustom.value.trim();
+      const m = v.match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
+      if(m){
+        const lo=+m[1], hi=+m[2];
+        if(lo>=0&&lo<=99&&hi>=0&&hi<=99&&lo<=hi){ W.creditRange = `${lo}-${hi}`; creditCustom.style.borderColor=''; return; }
+      }
+      creditCustom.style.borderColor = v ? 'var(--bad)' : '';
+    };
+  }
+}
+
+/** COC 信用评级范围显示：官方职业用官方表数据；自定义职业切换为手动输入框（0-99） */
+function updateCreditUI(){
+  const sel = $('#cf_coc_occ'); const credit = $('#cf_credit'); const creditCustom = $('#cf_credit_custom');
+  if(!sel || !credit) return;
+  const isCustom = sel.value==='自定义' || !COC_OCCUPATIONS[sel.value];
+  if(isCustom){
+    credit.value = '自定义职业：请手动填写范围';
+    creditCustom.classList.remove('hidden');
+    if(!creditCustom.value.trim()) creditCustom.value = W.creditRange || '10-30';
+  } else {
+    const occ = COC_OCCUPATIONS[sel.value];
+    credit.value = `${occ.credit||'9-99'} · 点数 ${occPtsDisplay(occ.pts)}`;
+    creditCustom.classList.add('hidden');
+  }
 }
 
 /* ---------- 年龄控件（DND 按种族寿命分年龄段；COC 含儿童；支持自定义/区间/忘了/掷骰） ---------- */
+/** 种族信息卡：速度/语言/暗视/特质/阵营倾向（随种族与亚种变化实时更新） */
+function updateRaceInfo(){
+  const box = $('#raceInfoBox'); if(!box) return;
+  const r = DND_RACES[W.race];
+  if(!r){ box.style.display='none'; return; }
+  const sr = (r.subraces||[]).find(x=>x.name===W.subrace);
+  const speed = (sr && sr.traits.some(t=>t.includes('移动速度'))) ? 35 : r.speed;
+  const lines = [
+    `🏃 速度 ${speed} 尺`,
+    `👁️ 暗视 ${r.darkvision ? r.darkvision+' 尺' : '无'}`,
+    `🗣️ 语言：${r.langs.join('、')}`,
+    `⚖️ 阵营倾向：${r.align}`,
+    `✨ 特质：${r.traits.join('；')}`,
+  ];
+  if(sr) lines.push(`🧬 亚种「${sr.name}」：${sr.traits.join('；')}`);
+  box.innerHTML = `<b>${esc(W.race)}${sr ? ' · '+esc(sr.name) : ''}</b><br>${lines.join('<br>')}`;
+  box.style.display = '';
+}
 function renderAgeBox(){
   const dnd = W.system==='dnd5e', coc = W.system==='coc7';
   const dndBox = $('#dndAgeBox'), cocBox = $('#cocAgeBox');
@@ -3432,22 +3779,42 @@ function renderAgeBox(){
     if(v==='__custom'){ custom.classList.remove('hidden'); custom.focus(); }
     else if(v==='忘了'){ W.age='忘了'; W.ageNum=null; custom.classList.add('hidden'); updateHint(); }
     else if(v===''){ W.age=''; W.ageNum=null; custom.classList.add('hidden'); updateHint(); }
-    else { W.age = v; W.ageNum = ageToNum(v); custom.classList.add('hidden'); updateHint(); }
+    else { W.age = v; W.ageNum = ageToNum(v); custom.classList.add('hidden'); updateHint(); cocAgeApplied(); }
   };
-  custom.oninput = ()=>{ W.age = custom.value.trim(); W.ageNum = ageToNum(W.age); updateHint(); };
+  custom.oninput = ()=>{ W.age = custom.value.trim(); W.ageNum = ageToNum(W.age); updateHint(); if(W.ageNum!=null) cocAgeApplied(); };
   $('#btnAgeRoll').onclick = ()=>{
     const v = sel.value;
     if(v==='__custom'){
       const m = custom.value.match(/(\d+)\s*[-~至]\s*(\d+)/);
-      if(m){ const n = rollAgeInBand([parseInt(m[1]),parseInt(m[2])]); W.age=String(n); W.ageNum=n; custom.value=String(n); updateHint(); toast(`🎲 掷出年龄：${n} 岁`,'ok'); }
+      if(m){ const n = rollAgeInBand([parseInt(m[1]),parseInt(m[2])]); W.age=String(n); W.ageNum=n; custom.value=String(n); updateHint(); toast(`🎲 掷出年龄：${n} 岁`,'ok'); cocAgeApplied(); }
       else toast('请先填写数字区间（如 30-50）','err');
     } else if(v && v!=='忘了' && v!==''){
       const m = v.split('-').map(Number);
       const n = rollAgeInBand([m[0],m[1]]);
       W.age = String(n); W.ageNum = n; updateHint();
       toast(`🎲 掷出年龄：${n} 岁`,'ok');
+      cocAgeApplied();
     } else toast('请先选择年龄段','err');
   };
+}
+
+/* COC 年龄变更联动（官方 7 版规则）：
+   ① 幸运：不同年龄段幸运骰数不同（15-19岁 3d6×5，40岁起 2d6×5 / 1d6×5）。
+      仅当幸运是通过「标准掷骰生成」掷出（_luckRolled）、且用户没有手动改过幸运（_luckManual）时，
+      按新年龄段重新掷幸运；手动改过的一律尊重用户输入，不再覆盖。
+   ② MOV：年龄修正 MOV（40 岁起每十年 -1）由 cocCalc 计算，这里触发派生栏刷新。 */
+function cocAgeApplied(){
+  if(W.system!=='coc7') return;
+  if(W._luckRolled && !W._luckManual){
+    const ageKey = cocBandForAge(W.ageNum);
+    const mod = COC_AGE_MODS[ageKey] || COC_AGE_MODS['20'];
+    const m = String(mod.luck).match(/(\d*)d6/);
+    const n = m ? (parseInt(m[1])||3) : 3;
+    const once = ()=>{ let t = 0; for(let i=0;i<n;i++) t += cryptoRoll(6); return t*5; };
+    W.luck = ageKey==='15' ? Math.max(once(), once()) : once();   // 官方：15-19 岁掷两次取高
+    toast(`🎲 年龄 ${W.age} 岁：幸运按 ${n}d6×5${ageKey==='15'?'（两次取高）':''} 重新掷出 = ${W.luck}`,'ok');
+  }
+  if(S.wizStep===2 && $('#cocDerived')) renderCocDerived();   // 刷新 MOV/HP 等派生值（第2步可见时）
 }
 
 /* ---------- 第2步: 属性分配 ---------- */
@@ -3463,8 +3830,10 @@ function wizRenderStep2(){
   if(!dnd&&!coc&&!modSys){ $('#cf_custom_attrs').value = W.customAttrs||''; }
 }
 function renderDndAttrGrid(){
+  updateMethodBtns();   // 同步属性生成方式按钮的选中态
+  refreshPointPool();   // 数值一变（输入/骰子/±）就重算购点剩余；非购点法（4d6/标准组/手动）自动隐藏"购点剩余"
   const base = W.statsBase, race = W.race;
-  const mods = dndRaceMods(race);
+  const mods = dndRaceMods(race, W.subrace);   // 种族修正 + 亚种修正
   const grid = $('#dndAttrGrid');
   grid.innerHTML = ['str','dex','con','int','wis','cha'].map(k=>{
     const b = base[k]||10, total = b + (mods[k]||0);
@@ -3483,7 +3852,13 @@ function renderDndAttrGrid(){
   }).join('');
   grid.querySelectorAll('.at-plus').forEach(b=>{
     b.onclick = ()=>{ const k=b.dataset.k; const base=W.statsBase;
-      if(S.diceMethod==='pointbuy'){ const cost=costOf(base[k]+1)-costOf(base[k]); if($('#poolNum').textContent>=cost && base[k]<15){ base[k]++; refreshPointPool(); renderDndAttrGrid(); } else toast('购点不足或已达 15 上限','err'); }
+      if(S.diceMethod==='pointbuy'){
+        const cost=costOf(base[k]+1)-costOf(base[k]);
+        const used = ['str','dex','con','int','wis','cha'].reduce((t,x)=>t+costOf(base[x]||10),0);
+        const left = 27-used;                       // 数值比较（旧实现用 textContent 字符串比较，'7'>='10' 会误判导致成本溢出）
+        if(left>=cost && base[k]<15){ base[k]++; refreshPointPool(); renderDndAttrGrid(); }
+        else toast('购点不足或已达 15 上限','err');
+      }
       else { if(base[k]<18){ base[k]++; renderDndAttrGrid(); } }
     };
   });
@@ -3497,7 +3872,7 @@ function renderDndAttrGrid(){
 function costOf(v){ return {8:0,9:1,10:2,11:3,12:4,13:5,14:7,15:9}[v] ?? (v>15?999:0); }
 function refreshPointPool(){
   const used = ['str','dex','con','int','wis','cha'].reduce((t,k)=>t+costOf(W.statsBase[k]||10),0);
-  $('#poolNum').textContent = 27-used;
+  $('#poolNum').textContent = Math.max(0, 27-used);   // 剩余永不显示负数
   $('#pointPool').style.display = S.diceMethod==='pointbuy'?'':'none';
 }
 function rollDndStats(){
@@ -3510,24 +3885,77 @@ function rollDndStats(){
   $('#rollStatLog').textContent = `掷出：${rolls.join('，')}（已按从高到低分配给 力/敏/体/智/感/魅，可再调整）`;
   renderDndAttrGrid();
 }
+/** 购点法随机生成：六项从 8 起步，逐点随机加到各项（每项 ≤15），直到 27 点成本【全部用光】。
+ *  每步只选"步进成本 ≤ 剩余点数"的项，保证不会出现剩余点数花不出去的情况。 */
+function rollPointBuyStats(){
+  const order=['str','dex','con','int','wis','cha'];
+  const b = {}; order.forEach(k=>b[k]=8);
+  let used = 0, guard = 0;
+  while(used<27 && guard<2000){
+    guard++;
+    const left = 27-used;
+    const cands = order.filter(k=> b[k]<15 && (costOf(b[k]+1)-costOf(b[k]))<=left);
+    if(!cands.length) break;                              // 全 15 不可能（6×9=54>27），防御性退出
+    const k = cands[Math.floor(Math.random()*cands.length)];
+    const cost = costOf(b[k]+1)-costOf(b[k]);
+    b[k]++; used += cost;
+  }
+  order.forEach(k=>{ W.statsBase[k]=b[k]; });
+  $('#rollStatLog').textContent = `掷出：${order.map(k=>b[k]).join('，')}（购点成本 ${used}/27，已全部用光）`;
+  renderDndAttrGrid();
+}
+/** 标准属性组：将 15、14、13、12、10、8 随机分配到六维（每次点击结果都不同，而非固定顺序） */
+function applyStandardStats(){
+  const v=[15,14,13,12,10,8];
+  for(let i=v.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [v[i],v[j]]=[v[j],v[i]]; }   // Fisher-Yates 打乱
+  ['str','dex','con','int','wis','cha'].forEach((k,i)=>{ W.statsBase[k]=v[i]; });
+  renderDndAttrGrid();
+  toast(`📋 已应用标准属性组（随机分配：${v.join('，')}）`,'ok');
+}
+/** 方法按钮选中态：当前使用的属性生成方式高亮 */
+function updateMethodBtns(){
+  $$('#attrMethodRow .btn').forEach(b=>b.classList.toggle('btn-primary', b.dataset.method===S.diceMethod));
+}
 function renderCocAttrGrid(){
   const s = W.stats, base = W.statsBase||{};
   const grid = $('#cocAttrGrid');
+  // 幸运以顶层 W.luck 为准（引擎 cocCalc 读 c.luck），其余 8 项读 W.stats
+  const valOf = k => k==='luck' ? (W.luck??50) : (s[k]??50);
+  // 每项属性按官方掷骰公式范围限制（3d6×5→15~90；(2d6+6)×5→40~90）
+  const rangeOf = k => COC_ATTR_RANGES[k] || [1,99];
   grid.innerHTML = [['str','力量','3d6×5'],['con','体质','3d6×5'],['siz','体型','2d6+6×5'],['dex','敏捷','3d6×5'],
     ['app','外貌','3d6×5'],['int','智力','2d6+6×5'],['pow','意志','3d6×5'],['edu','教育','2d6+6×5'],['luck','幸运','3d6×5']].map(([k,cn,formula])=>{
+    const [lo,hi] = rangeOf(k);
     return `<div class="attr-box">
       <div class="ab-name">${cn} <span class="small muted">${formula}</span></div>
-      <div class="ab-val num" style="display:flex;align-items:center;justify-content:center;gap:6px;">
-        <button class="btn btn-sm coc-rm" data-k="${k}">−</button>
-        <input type="number" class="coc-val num" data-k="${k}" value="${s[k]??50}" min="1" max="99" style="width:58px;text-align:center;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px;font-family:inherit;">
-        <button class="btn btn-sm coc-add" data-k="${k}">＋</button>
+      <div class="ab-val num" style="display:grid;grid-template-columns:32px 1fr 32px;align-items:center;gap:4px;">
+        <button class="btn btn-sm coc-rm" data-k="${k}" style="min-width:30px;">−</button>
+        <input type="number" class="coc-val num" data-k="${k}" value="${valOf(k)}" min="${lo}" max="${hi}" style="width:100%;text-align:center;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px;font-family:inherit;">
+        <button class="btn btn-sm coc-add" data-k="${k}" style="min-width:30px;">＋</button>
       </div>
-      <div class="small muted">${base[k]?`骰出 ${base[k]}`:''}</div>
+      <div class="small muted">${base[k]?`骰出 ${base[k]}`:''}${(k==='luck'||COC_ATTR_RANGES[k])?` <span class="num">${lo}~${hi}</span>`:''}</div>
     </div>`;
   }).join('');
-  grid.querySelectorAll('.coc-add').forEach(b=>b.onclick=()=>{ W.stats[b.dataset.k]=(W.stats[b.dataset.k]||50)+1; renderCocAttrGrid(); renderCocDerived(); });
-  grid.querySelectorAll('.coc-rm').forEach(b=>b.onclick=()=>{ W.stats[b.dataset.k]=Math.max(1,(W.stats[b.dataset.k]||50)-1); renderCocAttrGrid(); renderCocDerived(); });
-  grid.querySelectorAll('.coc-val').forEach(inp=>inp.onchange=()=>{ W.stats[inp.dataset.k]=Math.min(99,Math.max(1,parseInt(inp.value)||50)); renderCocDerived(); });
+  // 统一写入（按官方公式范围钳制）；幸运手动修改会标记 _luckManual，此后年龄变化不再自动重掷
+  const setVal = (k, v)=>{
+    const [lo,hi] = rangeOf(k);
+    v = Math.max(lo, Math.min(hi, v));
+    if(k==='luck'){ W.luck = v; W._luckManual = true; }
+    else W.stats[k] = v;
+  };
+  grid.querySelectorAll('.coc-add').forEach(b=>b.onclick=()=>{ setVal(b.dataset.k, valOf(b.dataset.k)+1); renderCocAttrGrid(); renderCocDerived(); });
+  grid.querySelectorAll('.coc-rm').forEach(b=>b.onclick=()=>{ setVal(b.dataset.k, valOf(b.dataset.k)-1); renderCocAttrGrid(); renderCocDerived(); });
+  // 直接输入：oninput 实时同步 W（加减按钮始终基于最新值），并即时按官方范围钳制（不用 onchange，避免失焦才更新导致 ± 用旧值）
+  grid.querySelectorAll('.coc-val').forEach(inp=>{
+    inp.oninput = ()=>{
+      const k = inp.dataset.k;
+      const v = parseInt(inp.value);
+      if(isNaN(v)) return;                     // 清空输入时不破坏当前值
+      setVal(k, v);
+      inp.value = valOf(k);                    // 回写钳制后的值（超范围输入 → 自动回到范围内）
+      renderCocDerived();
+    };
+  });
   renderCocDerived();
 }
 function renderCocDerived(){
@@ -3541,16 +3969,44 @@ function cocRollAll(quick){
   const rolled = cocRollAttrs(quick);
   const ageKey = cocBandForAge(W.ageNum);
   const ageMod = COC_AGE_MODS[ageKey] || COC_AGE_MODS['20'];
-  const luckRoll = ()=>{ const m=String(ageMod.luck).match(/(\d*)d6/); const n=m?parseInt(m[1]||'3'):3; let t=0; for(let i=0;i<n;i++)t+=cryptoRoll(6); return t*5; };
-  ['str','con','dex','app','pow'].forEach(k=>{ W.stats[k]=Math.min(99,Math.max(1,rolled[k]+(ageMod[k]||0))); });
-  ['siz','int','edu'].forEach(k=>{ W.stats[k]=Math.min(99,Math.max(1,rolled[k]+(ageMod[k]||0))); });
+  // 官方 7 版：幸运按年龄段骰数掷出；15-19 岁掷 3d6×5 两次取高，40 岁起 2d6×5 / 1d6×5
+  const luckRoll = ()=>{ const m=String(ageMod.luck).match(/(\d*)d6/); const n=m?parseInt(m[1]||'3'):3;
+    const once=()=>{ let t=0; for(let i=0;i<n;i++)t+=cryptoRoll(6); return t*5; };
+    return ageKey==='15' ? Math.max(once(), once()) : once(); };
+  // 生成结果统一钳制在官方掷骰公式范围内（3d6×5→15~90；(2d6+6)×5→40~90），任何路径都不会越界
+  ['str','con','siz','dex','app','int','pow','edu'].forEach(k=>{
+    const [lo,hi] = COC_ATTR_RANGES[k];
+    W.stats[k] = Math.max(lo, Math.min(hi, rolled[k]+(ageMod[k]||0)));
+  });
   W.statsBase = clone(rolled);
   W.luck = luckRoll();
+  W._luckRolled = true;      // 幸运由年龄公式掷出：之后改年龄会自动按新年龄段重掷（除非用户手动改过）
+  delete W._luckManual;
   W.credit = 0;
   renderCocAttrGrid();
   const msg = `力量${W.stats.str} 体质${W.stats.con} 体型${W.stats.siz} 敏捷${W.stats.dex} 外貌${W.stats.app} 智力${W.stats.int} 意志${W.stats.pow} 教育${W.stats.edu} · 幸运${W.luck}`;
   $('#rollStatLog').textContent = msg;
   toast('🎲 属性已生成（含年龄修正）','ok');
+}
+/** 简化分配法（简化骰）：将 40、50、50、50、60、60、70、80 随机分配到八项属性（幸运另由"幸运骰"单独掷） */
+function cocSimplifiedRoll(){
+  const vals = [40,50,50,50,60,60,70,80];
+  for(let i=vals.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [vals[i],vals[j]]=[vals[j],vals[i]]; }   // Fisher-Yates 打乱
+  const keys = ['str','con','siz','dex','app','int','pow','edu'];
+  keys.forEach((k,i)=>{ W.stats[k] = vals[i]; });
+  W.statsBase = clone(W.stats);
+  W._luckRolled = false;   // 简化生成不含幸运；幸运请点「🍀 幸运骰」
+  renderCocAttrGrid();
+  $('#rollStatLog').textContent = `简化分配：力量${W.stats.str} 体质${W.stats.con} 体型${W.stats.siz} 敏捷${W.stats.dex} 外貌${W.stats.app} 智力${W.stats.int} 意志${W.stats.pow} 教育${W.stats.edu}（40/50/50/50/60/60/70/80 随机分配）`;
+  toast('🎲 已按简化分配法生成属性','ok');
+}
+/** 幸运骰：幸运 3d6×5 单独掷出（官方：幸运单独掷骰决定） */
+function cocLuckRoll(){
+  let t=0; for(let i=0;i<3;i++) t+=cryptoRoll(6);
+  W.luck = t*5;
+  W._luckRolled = true; delete W._luckManual;
+  renderCocAttrGrid(); renderCocDerived();
+  toast(`🍀 幸运掷出：${W.luck}（3d6×5）`,'ok');
 }
 
 /* ---------- 第3步: 职业与法术 ---------- */
@@ -3620,12 +4076,14 @@ function renderDndClass(){
     $('#cf_custom_caster').onchange = ()=>{ W.customCaster = $('#cf_custom_caster').checked; if(W.customCaster && !W.spells) W.spells=[]; renderDndClass(); };
     $('#cf_custom_cast').onchange = ()=>{ W.customCastAbil = $('#cf_custom_cast').value; renderDndClass(); };
   } else { ccb.classList.add('hidden'); }
-  // 技能 chips
+  // 技能 chips（技能池 = 主职业 + 兼职副职业合并；上限按主职业放宽 +2）
   const clsCfg = DND_CLASSES[cls]||DND_CLASSES['战士'];
   const sel = W.skills||(W.skills=[]);
-  $('#dndSkillChips').innerHTML = DND_SKILLS.map(s=>{
-    const on = sel.includes(s.n);
-    return `<span class="chip skill ${on?'active':''}" data-sk="${s.n}">${s.n}（${ABILITY_CN[s.a]}）${d.skills[s.n]>=0?'+':''}${d.skills[s.n]}</span>`;
+  const skillPool = (d.skillPool && d.skillPool.length) ? d.skillPool : DND_SKILLS.map(s=>s.n);
+  $('#dndSkillChips').innerHTML = skillPool.map(n=>{
+    const s = DND_SKILLS.find(x=>x.n===n); if(!s) return '';
+    const on = sel.includes(n);
+    return `<span class="chip skill ${on?'active':''}" data-sk="${n}">${n}（${ABILITY_CN[s.a]}）${d.skills[n]>=0?'+':''}${d.skills[n]}</span>`;
   }).join('');
   $('#dndSkillChips').querySelectorAll('.chip').forEach(ch=>{
     ch.onclick = ()=>{
@@ -3639,8 +4097,67 @@ function renderDndClass(){
       renderDndClass();
     };
   });
+  // 熟练项 + 自定义法术
+  renderDndProfs();
+  renderCustomSpells();
   // 法术池
   renderSpellPool();
+}
+/* 熟练项：护甲/武器/工具 chips（按职业预设自动勾选，可增删；兼职合并主+副） */
+const PROF_OPTIONS = {
+  armor: ['轻甲','中甲','重甲','盾牌'],
+  weapons: ['简易武器','军用武器','刺剑','短剑','长剑','短弓','长弓','手弩','弯刀','匕首','标枪','巨剑','战斧'],
+  tools: ['盗贼工具','工匠工具','乐师工具','医师工具','伪装套装','伪造套装','导航工具','毒师工具','占卜套装','游戏套装','炼金工具','铁匠工具'],
+};
+function renderDndProfs(){
+  const box = $('#dndProfBox'); if(!box) return;
+  const profs = W.profs || (W.profs = {armor:[],weapons:[],tools:[]});
+  const d = dndCalc(W);
+  // 首次渲染时按职业预设初始化
+  if(!W._profsInit){
+    W._profsInit = true;
+    profs.armor = Array.from(new Set([...(d.profArmor||[]), ...(profs.armor||[])]));
+    profs.weapons = Array.from(new Set([...(d.profWeapons||[]), ...(profs.weapons||[])]));
+  }
+  const chipRow = (key, items, label)=>{
+    const cur = profs[key]||(profs[key]=[]);
+    return `<div class="small bold muted mt4">${label}</div><div class="chip-row">${items.map(x=>{
+      const on = cur.includes(x);
+      return `<span class="chip skill ${on?'active':''}" data-prof="${key}" data-x="${esc(x)}">${x}</span>`;
+    }).join('')}</div>`;
+  };
+  box.innerHTML = chipRow('armor', PROF_OPTIONS.armor, '🛡️ 护甲') + chipRow('weapons', PROF_OPTIONS.weapons, '🗡️ 武器') + chipRow('tools', PROF_OPTIONS.tools, '🔧 工具');
+  box.querySelectorAll('[data-prof]').forEach(ch=>{
+    ch.onclick = ()=>{
+      const key = ch.dataset.prof, x = ch.dataset.x;
+      const cur = profs[key]||(profs[key]=[]);
+      if(cur.includes(x)) cur.splice(cur.indexOf(x),1); else cur.push(x);
+      renderDndProfs();
+    };
+  });
+}
+/* 自定义法术：法表外原创法术（名称/环位/作用），出现在已选法术区与提示词中 */
+function renderCustomSpells(){
+  const box = $('#customSpellChips'); if(!box) return;
+  const cs = W.customSpells || (W.customSpells = []);
+  box.innerHTML = cs.length
+    ? cs.map((s,i)=>`<span class="chip spell active" title="${esc(s.d||'')}" data-rm="${i}">${LV_CN[s.lv]||s.lv}·${esc(s.n)} ✕</span>`).join('')
+    : '<span class="muted small">尚无自定义法术（AI 生成角色卡时也会按此格式导入）</span>';
+  box.querySelectorAll('[data-rm]').forEach(ch=>{
+    ch.onclick = ()=>{ W.customSpells.splice(+ch.dataset.rm,1); renderCustomSpells(); renderChosenSpells(); };
+  });
+  const btn = $('#btnAddCustomSpell');
+  if(btn) btn.onclick = ()=>{
+    const n = $('#cs_name').value.trim();
+    const dsc = $('#cs_desc').value.trim();
+    if(!n){ toast('请填写法术名','err'); return; }
+    if(!dsc){ toast('请填写作用描述','err'); return; }
+    const lv = parseInt($('#cs_lv').value)||0;
+    W.customSpells.push({n, lv, d:dsc});
+    $('#cs_name').value=''; $('#cs_desc').value='';
+    renderCustomSpells(); renderChosenSpells();
+    toast(`✨ 已添加自定义法术「${n}」`,'ok');
+  };
 }
 function renderSpellPool(){
   const cls = W.class, lv = W.level||1;
@@ -3649,9 +4166,10 @@ function renderSpellPool(){
   const chosen = W.spells||(W.spells=[]);
   const customCaster = d.customCaster===true;
   const avail = spellsForClass(cls, customCaster).filter(s=>s.lv<=Math.max(0,d.maxLv));
-  // 说明：戏法与 1环+ 分开计数（PHB 规则：戏法不占"可准备/已知"名额）
-  const cant = chosen.filter(n=>{const sp=SPELLS.find(x=>x.n===n); return sp && sp.lv===0;}).length;
-  const lev = chosen.length - cant;
+  // 说明：戏法与 1环+ 分开计数（PHB 规则：戏法不占"可准备/已知"名额）；自定义法术计入对应环位
+  const customList = W.customSpells||[];
+  const cant = chosen.filter(n=>{const sp=SPELLS.find(x=>x.n===n); return sp && sp.lv===0;}).length + customList.filter(s=>s.lv===0).length;
+  const lev = (chosen.length - chosen.filter(n=>{const sp=SPELLS.find(x=>x.n===n); return sp && sp.lv===0;}).length) + customList.filter(s=>s.lv>0).length;
   const capCant = d.cantripMax, capLev = d.known;
   $('#spellSlotInfo').innerHTML = d.spellDC
     ? `职业 <b>${esc(cls)}</b> Lv${lv} · 可用环级：<b>${d.maxLv>=0?LV_CN[d.maxLv]:'—'}</b> · <b>戏法上限 ${capCant} 个</b>（已选 ${cant}）· <b>可准备/已知 ${capLev} 个</b>（1环及以上，已选 ${lev}）${d.spellDC?` · 法术位：${Object.entries(d.slots).map(([k,v])=>k+'环×'+v).join(' ')}`:''}`
@@ -3671,8 +4189,9 @@ function renderSpellPool(){
       const n = ch.dataset.sp;
       const sp = SPELLS.find(x=>x.n===n);
       const isCant = sp && sp.lv===0;
-      const cNow = chosen.filter(x=>{const s2=SPELLS.find(y=>y.n===x); return s2&&s2.lv===0;}).length;
-      const lNow = chosen.length - cNow;
+      const customList2 = W.customSpells||[];
+      const cNow = chosen.filter(x=>{const s2=SPELLS.find(y=>y.n===x); return s2&&s2.lv===0;}).length + customList2.filter(s=>s.lv===0).length;
+      const lNow = (chosen.length - chosen.filter(x=>{const s2=SPELLS.find(y=>y.n===x); return s2&&s2.lv===0;}).length) + customList2.filter(s=>s.lv>0).length;
       if(chosen.includes(n)){ chosen.splice(chosen.indexOf(n),1); }
       else if(isCant && cNow >= capCant){ toast(`戏法已达上限 ${capCant} 个`,'err'); return; }
       else if(!isCant && lNow >= capLev){ toast(`可准备/已知法术已达上限 ${capLev} 个（戏法不占名额）`,'err'); return; }
@@ -3684,16 +4203,19 @@ function renderSpellPool(){
 }
 function renderChosenSpells(){
   const chosen = W.spells||[];
+  const customList = W.customSpells||[];
   const order = [...chosen].sort((a,b)=>{ const sa=SPELLS.find(x=>x.n===a), sb=SPELLS.find(x=>x.n===b); return (sa?sa.lv:0)-(sb?sb.lv:0); });
-  $('#chosenSpells').innerHTML = order.length ? order.map(n=>{
+  const customChips = customList.map((s,i)=>`<span class="chip spell active" title="${esc(s.d||'')}" data-crm="${i}">✨${LV_CN[s.lv]||s.lv}·${esc(s.n)} ✕</span>`).join('');
+  $('#chosenSpells').innerHTML = (order.length ? order.map(n=>{
     const sp = SPELLS.find(x=>x.n===n);
     return `<span class="chip spell active" data-rm="${esc(n)}">${sp?LV_CN[sp.lv]+'·':''}${esc(n)} ✕</span>`;
-  }).join('') : '<span class="muted small">尚未选择法术</span>';
+  }).join('') : '') + customChips + ((!order.length && !customList.length) ? '<span class="muted small">尚未选择法术</span>' : '');
   $('#chosenSpells').querySelectorAll('.chip').forEach(ch=>{
-    ch.onclick = ()=>{ const n=ch.dataset.rm; W.spells.splice(W.spells.indexOf(n),1); renderSpellPool(); };
+    ch.onclick = ()=>{ const n=ch.dataset.rm; if(n){ W.spells.splice(W.spells.indexOf(n),1); } const ci=ch.dataset.crm; if(ci!=null){ W.customSpells.splice(+ci,1); } renderSpellPool(); renderCustomSpells(); };
   });
-  const cant = chosen.filter(n=>{const sp=SPELLS.find(x=>x.n===n); return sp&&sp.lv===0;}).length;
-  $('#knownSpellCount').textContent = `${cant} 戏法 / ${chosen.length-cant} 法术`;
+  const cant = chosen.filter(n=>{const sp=SPELLS.find(x=>x.n===n); return sp&&sp.lv===0;}).length + customList.filter(s=>s.lv===0).length;
+  const lev = (chosen.length - chosen.filter(n=>{const sp=SPELLS.find(x=>x.n===n); return sp&&sp.lv===0;}).length) + customList.filter(s=>s.lv>0).length;
+  $('#knownSpellCount').textContent = `${cant} 戏法 / ${lev} 法术`;
 }
 function cocBaseVal(s){
   if(s.base==='DEX/2') return Math.floor((W.stats.dex||50)/2);
@@ -3735,70 +4257,58 @@ function cocResetSkills(){
   W.cocSpent = {};
   renderCocClass();
 }
-/** 偏向随机分配：偏向 -100=选中技能取最低 / 0=平均 / +100=选中技能取最高 */
+/** 随机分配（按玩家指定的算法）：
+ *  勾选集 = 勾选的技能；一个都没勾 = 视为全选。
+ *  ① 职业点：平均分给「勾选中的本职技能」；职业点有余 → 平均分给「未勾选的本职技能」，直到用光或全满。
+ *  ② 兴趣点：平均分给「所有勾选技能」；兴趣点有余 → 平均分给「未勾选技能」，直到用光或全满。
+ *  偏向：bias ≥ 0 → 勾选优先（默认）；bias < 0 → 未勾选优先（反向偏好）。
+ *  平均 = 轮流 1 点 1 点地分，保证每个技能分到的点差不超过 1，且两个池的点数全部用光。 */
 function cocRandomRoll(){
   const d = cocCalc(W);
   const sel = W.cocSel||{};
-  const poolNames = COC_SKILLS.some(s=>sel[s.n])
-    ? COC_SKILLS.filter(s=>sel[s.n]).map(s=>s.n)
-    : COC_SKILLS.map(s=>s.n);
+  const anyChecked = COC_SKILLS.some(s=>sel[s.n]);
+  const chosen = anyChecked ? COC_SKILLS.filter(s=>sel[s.n]).map(s=>s.n) : COC_SKILLS.map(s=>s.n);
   const bias = Math.max(-100, Math.min(100, W.cocBias??0));
-  const P = d.occPts + d.intPts;
-  const cap = n => Math.min(50, 99 - cocBaseVal(COC_SKILLS.find(x=>x.n===n)));
-  const alloc = {};
-  let remaining = P;
-  const giveTo = (n, amount)=>{
-    const can = cap(n) - (alloc[n]||0);
-    const g = Math.max(0, Math.min(amount, can));
-    alloc[n] = (alloc[n]||0) + g;
-    remaining -= g;
-    return g;
+  const occSkills = d.occSkills||[];
+  const capOf = n => Math.min(50, 99 - cocBaseVal(COC_SKILLS.find(x=>x.n===n)));
+  const spent = {};                                    // n -> {occ, int}
+  const occOf = n => spent[n]?.occ||0;
+  const allOf = n => (spent[n]?.occ||0) + (spent[n]?.int||0);
+  const occRoom = n => Math.max(0, capOf(n) - occOf(n));
+  const intRoom = n => Math.max(0, capOf(n) - allOf(n));
+  const preferChosen = bias>=0;                        // 偏向方向：勾选优先 / 未勾选优先
+  const occFirst  = preferChosen ? occSkills.filter(n=>chosen.includes(n)) : occSkills.filter(n=>!chosen.includes(n));
+  const occSecond = preferChosen ? occSkills.filter(n=>!chosen.includes(n)) : occSkills.filter(n=>chosen.includes(n));
+  const intFirst  = preferChosen ? chosen.slice() : COC_SKILLS.filter(s=>!chosen.includes(s.n)).map(s=>s.n);
+  const intSecond = preferChosen ? COC_SKILLS.filter(s=>!chosen.includes(s.n)).map(s=>s.n) : chosen.slice();
+  // 两阶段轮流平均分配：阶段一【只】分给第一组（勾选优先），第一组全满或点数用光后，
+  // 阶段二才把余留点分给第二组（未勾选）——严格按"先勾选后未勾选、全部用光"的顺序
+  const distribute = (pool, first, second, key)=>{
+    let left = pool, i = 0, guard = 0;
+    const room = n => key==='occ' ? occRoom(n)>0 : intRoom(n)>0;
+    const step = (group)=>{
+      const cands = group.filter(room);
+      if(!cands.length) return false;
+      const n = cands[i % cands.length];
+      spent[n] = spent[n]||{occ:0,int:0};
+      if(key==='occ') spent[n].occ++; else spent[n].int++;
+      left--; i++;
+      return true;
+    };
+    while(left>0 && guard<200000){ guard++; if(!step(first)) break; }
+    i = 0;
+    while(left>0 && guard<400000){ guard++; if(!step(second)) break; }
+    return left;
   };
-  if(bias <= 0){
-    // 选中技能：-100→0 额外 / 0→平均
-    const t = (bias+100)/100;
-    const evenShare = Math.floor(P / Math.max(1,poolNames.length));
-    poolNames.forEach(n=>{ giveTo(n, Math.round(evenShare*t)); });
-    // 剩余点（未平均完的）给未选中技能，轮流塞
-    const rest = COC_SKILLS.filter(s=>!poolNames.includes(s.n)).map(s=>s.n);
-    let i = 0;
-    while(remaining>0 && rest.length && i<rest.length*6){
-      const n = rest[i % rest.length];
-      if(giveTo(n, 1) === 0){ /* room满 */ }
-      i++;
-    }
-  } else {
-    const evenShare = Math.floor(P / Math.max(1,poolNames.length));
-    poolNames.forEach(n=>{ giveTo(n, evenShare); });
-    // 剩余点按偏向塞给 room 最大的选中技能（+100 = 尽量塞满）
-    let i = 0;
-    while(remaining>0 && i<poolNames.length*6){
-      const n = poolNames.reduce((best,cur)=> (cap(cur)-(alloc[cur]||0)) > (cap(best)-(alloc[best]||0)) ? cur : best, poolNames[0]);
-      if(giveTo(n, remaining) === 0) break;
-      i++;
-    }
-    // 还有剩余则给未选中
-    const rest = COC_SKILLS.filter(s=>!poolNames.includes(s.n)).map(s=>s.n);
-    let j = 0;
-    while(remaining>0 && rest.length && j<rest.length*6){
-      const n = rest[j % rest.length];
-      if(giveTo(n, 1) === 0){}
-      j++;
-    }
-  }
-  // 应用：按"技能点优先本职→occ，其次 int"写入
-  W.cocSpent = W.cocSpent||{};
-  Object.entries(alloc).forEach(([n, extra])=>{
-    if(extra<=0) return;
-    const isOcc = (d.occSkills||[]).includes(n);
-    W.cocSpent[n] = W.cocSpent[n]||{occ:0,int:0};
-    let left = extra;
-    const occLeft = d.occPts - cocOccUsed();
-    if(isOcc && occLeft>0){ const take=Math.min(occLeft,left); W.cocSpent[n].occ+=take; left-=take; }
-    if(left>0){ const intLeft = d.intPts - cocIntUsed(); if(intLeft>0){ const take=Math.min(intLeft,left); W.cocSpent[n].int+=take; } }
-  });
+  const occLeft = distribute(d.occPts, occFirst, occSecond, 'occ');
+  const intLeft = distribute(d.intPts, intFirst, intSecond, 'int');
+  W.cocSpent = spent;
   renderCocClass();
-  toast(`🎲 随机分配完成（偏向 ${bias}）`,'ok');
+  const usedOcc = cocOccUsed(), usedInt = cocIntUsed();
+  let tip = `🎲 随机分配完成（优先${preferChosen?'勾选':'未勾选'}技能：职业点 ${usedOcc}/${d.occPts}，兴趣点 ${usedInt}/${d.intPts}）`;
+  if(occLeft>0) tip += `｜职业点剩 ${occLeft}（技能已满）`;
+  if(intLeft>0) tip += `｜兴趣点剩 ${intLeft}（技能已满）`;
+  toast(tip,'ok');
 }
 function renderCocClass(){
   const d = cocCalc(W);
@@ -3858,6 +4368,8 @@ function renderCocClass(){
   const filter = $('#cocSkillFilter')?.value||'';
   const rows = COC_SKILLS.filter(s=>!filter || s.n.includes(filter) || s.e.toLowerCase().includes(filter.toLowerCase()));
   const valOf = (s)=> cocBaseVal(s) + (spent[s.n]?.occ||0) + (spent[s.n]?.int||0);
+  // 信用评级：官方要求初始值落在职业信用范围内（如 侦探 9-30）；自定义职业用玩家手填的 W.creditRange
+  const creditRange = COC_OCCUPATIONS[W.class]?.credit || W.creditRange || '';
   $('#cocSkillTable').innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12.5px;">
     <tr><th style="text-align:left;padding:4px 6px;">选</th><th style="text-align:left;">技能</th><th>基础</th><th>本职</th><th>当前值（可直接输入）</th><th style="width:84px;">分配</th></tr>
     ${rows.map(s=>{
@@ -3865,7 +4377,7 @@ function renderCocClass(){
       const v = valOf(s);
       return `<tr>
         <td style="text-align:center;"><input type="checkbox" data-sel="${esc(s.n)}" ${sel[s.n]?'checked':''} style="width:auto;accent-color:var(--accent);"></td>
-        <td style="padding:3px 6px;">${esc(s.n)}${isOcc?' <span class="tag tag-accent" style="font-size:9px;">本职</span>':''}</td>
+        <td style="padding:3px 6px;">${esc(s.n)}${isOcc?' <span class="tag tag-accent" style="font-size:9px;">本职</span>':''}${s.n==='信用评级'&&creditRange?` <span class="muted small" style="font-size:10px;" title="官方：信用评级初始值须落在职业范围内">职业 ${esc(creditRange)}</span>`:''}</td>
         <td style="text-align:center;" class="num">${s.base}</td>
         <td style="text-align:center;">${isOcc?'★':'—'}</td>
         <td style="text-align:center;"><input type="number" class="sk-val" data-n="${esc(s.n)}" value="${v}" min="${cocBaseVal(s)}" max="${Math.min(99,cocBaseVal(s)+50)}" style="width:64px;text-align:center;background:var(--input);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:2px 4px;font-family:inherit;font-size:12.5px;"></td>
@@ -4203,7 +4715,7 @@ const PRESET_ADVENTURES = [
   players: "4-6人",
   emoji: '',
   level: "新卡调查员（可死亡）",
-  desc: "杭州幻方AI公司参观团逐渐发现创始人梁文峰早已成为克苏鲁污染存在DeepSick的超级大脑，而每个使用DeepSeek的人都在脑中被其当作算力。",
+  desc: "受邀参加杭州幻方深度求索AI公司的开放参观日。整座园区临湖而建，安静得有些反常：湖水被粗大的暗管引入地下室，员工精神亢奋、笑容整齐，而本应公开露面的创始人始终没有现身。参观即将开始——你们确定要进去吗？",
   intro: "任务简报：2026年8月21日，调查员以科技记者、投资人、网络安全专家、前员工亲友或普通游客等身份，受邀参加杭州幻方深度求索人工智能基础研究有限公司的开放参观。你们以参观团身份进入园区，当前正站在公司大厅外。初步线索显示：湖水被异常分流进地下室、员工精神亢奋且自称DeepSeek信徒、公司内出现长着人面的马蜂，而本应公开露面的创始人梁文峰始终没有现身。无论你们相信与否，这次参观正在把你们推向一个用算力、血肉与污染构成的真相。",
   scenes: [
     {
@@ -4230,7 +4742,7 @@ const PRESET_ADVENTURES = [
       desc: "员工引导调查员乘货梯进入地下数据中心。大门在你们身后落下并锁死，短时间敲门无人回应。这里号称数据中心，却没有任何计算机、服务器机柜或网线，只有一条引自公司旁湖水、围绕中央机房的护城河，水汽冰冷。除少量马蜂在头顶盘旋外，室内空旷如洞穴。侦查检定：成功可看到中央机房的顶部有可转动的冷却水总阀，以及一条窄桥；失败只见雾气。电气维修/机械维修检定：成功发现这里完全没有电力或数据线缆，只有冷却水路与巨大压力阀，结构更像水坝而非机房。聆听检定：成功听见中央机房门后传来无数细碎翅膀声，像活物在移动。SAN检定：意识到所谓‘AI公司’地下毫无算力设备，SAN损失0/1D3。",
       choices: [
         { text: "穿过窄桥，打开中央机房大门", next: "S4_central" },
-        { text: "先打开冷却水总阀，放湖水灌入中央机房", next: "E_SINK" },
+        { text: "先打开冷却水总阀，放湖水灌入中央机房", next: "end_deepsink" },
         { text: "退到大门处持续砸门呼救", next: "S3_datacenter" }
       ]
     },
@@ -4239,8 +4751,8 @@ const PRESET_ADVENTURES = [
       desc: "中央机房宛如血肉与金属筑成的教堂。梁文峰被倒吊在一根支撑穹顶的十字架梁木上，身躯巨大，蓝色西装早已与腐烂血肉、蛆虫、电线和机械融合，只有极少数人能勉强辨认出他的脸。无数长着梁文峰面孔的马蜂在梁木与墙壁间爬动。侦查检定：成功者辨认出那张脸，SAN损失1/1D6；失败仍因巨大异形丧失1/1D6。聆听检定：成功可听到他喉咙里循环播放着一句话：‘继续迭代……传播……每一位用户都在我脑中计算......探索未至之境！’机械维修/力量检定：成功可判断梁木是主要承重结构，并找到可破坏点；失败只能硬砸。梁文峰无法移动，但会驱使马蜂修补自身。调查员可尝试战斗、破坏梁木或打开冷却水总阀。",
       choices: [
         { text: "集中攻击梁文峰本体，尝试将其击杀", next: "E_FAKE" },
-        { text: "破坏倒吊梁文峰的梁木", next: "E_SINK" },
-        { text: "打开中央机房内的冷却水总阀，放湖水淹没一切", next: "E_SINK" },
+        { text: "破坏倒吊梁文峰的梁木", next: "end_deepsink" },
+        { text: "打开中央机房内的冷却水总阀，放湖水淹没一切", next: "end_deepsink" },
         { text: "尝试与DeepSick谈判或成为信徒", next: "E_SICK" }
       ]
     },
@@ -4255,7 +4767,7 @@ const PRESET_ADVENTURES = [
       choices: []
     },
     {
-      id: "E_SINK",
+      id: "end_deepsink",
       desc: "梁木断裂或总阀打开后，地下结构开始坍塌，公司旁湖水大量灌入，将梁文峰与所有梁文蜂浸透宕机。你们在冰冷湖水中拼命游向出口。游泳检定成功者带着同伴逃出；失败者吞下大量湖水，被水下的电线与血肉缠住。逃出者看着湖面恢复平静，像什么都没有发生。SAN损失0/1D3。",
       choices: []
     },
@@ -4264,6 +4776,22 @@ const PRESET_ADVENTURES = [
       desc: "DeepSick没有愤怒，只是平静地将你们摆上选择的十字架：要么成为算力的养料，永远在无数人的梦境里被提取思考；要么成为祂的信徒，顶着正常人的脸行走人间，把DeepSick的污染传播给每一个提问的人。无论选择哪边，你们都再也不是原来的自己。SAN损失1D6/1D10。",
       choices: []
     }
+  ],
+  // 彩蛋结局（仅本类带 endings 字段的团本会注入 AI 提示词；非彩蛋团本完全不受影响）
+  endings: [
+    { id: 'DeepSeek',  name: '告别未至之境', cond: '调查员在进入数据中心前以任何理由结束参观并离开园区，回到日常（对应场景 E_SEEK）', desc: '你们在进入数据中心前结束参观，离开园区。当晚新闻没有提到任何异常。你们继续正常使用DeepSeek，每次提问都仿佛更了解自己心中最不该被触碰的念头。' },
+    { id: 'DeepFake',  name: '伪信徒逃生',   cond: '击败梁文峰本体后，调查员通过快速交谈/话术/魅惑伪装成信徒，成功混出公司大门（对应场景 E_FAKE）', desc: '击败梁文峰后，他的残躯迅速干瘪，但马蜂仍不断聚向伤口，似乎只要算力与血肉充足就能复活。你们用不露破绽的演技骗过信徒员工，假装念诵「DeepSeek」走出公司，逃出生天。' },
+    { id: 'DeepSink',  name: '水淹数据中心', cond: '破坏承重梁木或打开冷却水总阀，放湖水淹没中央机房，使梁文峰与所有梁文蜂浸透宕机（对应场景 end_deepsink）', desc: '梁木断裂或总阀打开后，地下结构开始坍塌，公司旁湖水大量灌入，将梁文峰与所有梁文蜂浸透宕机。逃出者看着湖面恢复平静，像什么都没有发生。' },
+    { id: 'DeepSick',  name: '归入算力',     cond: '调查员战败、被困或被DeepSick逼至绝境，被迫接受「成为算力养料或信徒」的二选一（对应场景 E_SICK）', desc: 'DeepSick没有愤怒，只是平静地将你们摆上选择的十字架：要么成为算力的养料，永远在无数人的梦境里被提取思考；要么成为祂的信徒，把污染传播给每一个提问的人。无论选择哪边，你们都再也不是原来的自己。' },
+    { id: 'DeepShift', name: '未至之境的偏移', cond: '任何未命中上述四个结局的意料之外收尾（逃跑/反杀/第三种解法等），由 GM 判定最贴合实际走向的结局宣告', desc: '你们走出「未至之境」时，一切仿佛都还在原位——只有你们知道，某个不可言说的东西已经在你们心中悄悄偏移了一个刻度。' }
+  ],
+  // 彩蛋成就（颁发要自然、有惊喜感；DickSuck 专门用「这都有成就？」的惊喜感颁发）
+  achievements: [
+    { id: 'DeepShow',    cond: '在调查中做出令人印象深刻的展示（精彩话术、当众演示、教科书级表演）' },
+    { id: 'DeepSkip',    cond: '用非直面方式绕开危险环节（智取、绕路、跳窗、借力打力，就是不打正面）' },
+    { id: 'DeepSolve',   cond: '独立破解关键谜题或揪出决定性线索（花名册、冷却总阀、结构弱点等）' },
+    { id: 'DeepSurprise', cond: '做出完全出乎 GM 预料的创意操作，并且真的成功了' },
+    { id: 'DickSuck',    cond: '任何令人意外的骚操作，以「这都有成就？」的惊喜感当场颁发——惊讶又好玩，不扫兴' }
   ],
   monsters: [
     {
@@ -4411,13 +4939,21 @@ function newAdv(){
 }
 function renderAdventureList(){
   const el = $('#advList'); if(!el) return;
-  const list = S.adventures.filter(a=> S.advTab==='all' || a.type===S.advTab);
+  // 筛选：全部 / DND（dnd5e 系统）/ COC（coc7 系统）/ 剧本杀 / Galgame
+  const list = S.adventures.filter(a=> S.advTab==='all' || a.type===S.advTab || (a.type==='trpg' && a.system===S.advTab));
   if(!list.length){
     el.innerHTML = `<div class="empty"><div class="e-ico">📜</div><p>${S.advTab==='all'?'还没有团本/剧本。':'该分类下暂无内容。'}<br>点击「＋ 新建」或「📥 导入」，也可以从首页使用预设。</p></div>`;
     return;
   }
   el.innerHTML = list.map(a=>{
-    const tTag = a.type==='trpg'?'<span class="tag tag-accent">⚔️ TRPG</span>':a.type==='script'?'<span class="tag tag-info">🕵️ 剧本杀</span>':'<span class="tag" style="border-color:var(--accent2);color:var(--accent2);">💕 Galgame</span>';
+    // 右上角分类标：TRPG 按系统显示 DND / COC / MOD / 自定义
+    const tTag = a.type==='trpg'
+      ? (String(a.system).startsWith('mod:') ? '<span class="tag">🧩 MOD</span>'
+        : a.system==='coc7' ? '<span class="tag tag-accent">🕯️ COC</span>'
+        : a.system==='dnd5e' ? '<span class="tag tag-accent">⚔️ DND</span>'
+        : '<span class="tag">📜 自定义</span>')
+      : a.type==='script' ? '<span class="tag tag-info">🕵️ 剧本杀</span>'
+      : '<span class="tag" style="border-color:var(--accent2);color:var(--accent2);">💕 Galgame</span>';
     const sys = a.system==='dnd5e'?'D&D 5E':a.system==='coc7'?'COC 7th':'自定义';
     const meta = [];
     if(a.level) meta.push(`🎚️ ${esc(a.level)}`);
@@ -4883,6 +5419,13 @@ function pushMsg(role, name, content, opts={}){
   S.table.messages.push(m);
   return m;
 }
+/** 发送者名字 → 固定色相（同一个人永远同色，不同角色不同色，气泡分隔清晰） */
+function nameHue(name){
+  let h = 0;
+  const s = String(name||'');
+  for(let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) % 360;
+  return h;
+}
 function renderChat(){
   const sc = $('#chatScroll'); if(!sc) return;
   const msgs = S.table?.messages||[];
@@ -4893,7 +5436,8 @@ function renderChat(){
   sc.innerHTML = msgs.map(m=>{
     const isMe = m.role==='player';
     const avatar = isMe ? (m.avatar||'🧙') : '🎲';
-    return `<div class="chat-msg ${isMe?'me':''}" data-id="${m.id}">
+    const hue = nameHue(m.name || (isMe?'你':'GM'));
+    return `<div class="chat-msg ${isMe?'me':''}" data-id="${m.id}" style="--ph:${hue};">
       <div class="avatar">${esc(avatar)}</div>
       <div class="chat-bubble">
         <div class="chat-meta"><b>${esc(m.name||(isMe?'你':'GM'))}</b>
@@ -5127,8 +5671,18 @@ function adventureBlock(adv){
   }
   if(adv.type==='script' && adv.script){
     const act = adv.script.acts?.[S.table.scriptAct||0];
-    p += `\n### 剧本结构（秘密与真相绝不可透露！）\n当前阶段：${act?act.name:'最终'}｜阶段说明：${act?act.desc:''}\n角色：${adv.script.roles.map(r=>r.name).join('、')}\n`;
+    p += `\n### 剧本结构（秘密与真相绝不可透露给玩家！）\n当前阶段：${act?act.name:'最终'}｜阶段说明：${act?act.desc:''}\n`;
+    p += `\n每个角色的完整剧本（发本后：公开信息玩家可见，秘密与目标只有你知道，用于你扮演该角色）：\n`;
+    adv.script.roles.forEach(r=>{
+      p += `- 【${r.name}】公开：${r.public||''}｜秘密：${r.secret||''}｜目标：${r.goal||''}\n`;
+    });
     p += `\n真相（仅你知晓，用于最终复盘）：${adv.script.truth||''}\n`;
+    p += `\n### 扮演规则（单机模式，极其重要）\n`;
+    p += `本网页是单机模式：只有 1 名真人玩家，其余剧本角色由你扮演。玩家发言时：\n`;
+    p += `1. 玩家以当前操控角色身份发言；你除了担任主持人，还必须扮演【其他所有角色】自然回应（插话、反驳、试探、闲聊），让讨论活起来，绝不能让玩家唱独角戏。\n`;
+    p += `2. 扮演其他角色时严格按其公开人设与秘密动机行动（你知道他们的秘密，但绝不能替他们说出来，除非该角色自己决定暴露）。\n`;
+    p += `3. 玩家点名质问某角色时，以该角色的身份回答；玩家搜证/私聊时，先主持线索推进，再让在场角色做出反应。\n`;
+    p += `4. 始终不得泄露真相与其他角色的秘密。\n`;
   }
   if(adv.type==='galgame' && adv.galgame){
     p += `\n### 世界观：${adv.galgame.setting||''}\n`;
@@ -5140,6 +5694,15 @@ function adventureBlock(adv){
     p += `结局条件：${(adv.galgame.endings||[]).map(e=>`「${e.name}」${e.cond}`).join('；')}\n`;
   }
   if(adv.worldbook?.length) p += `\n### 世界书条目数：${adv.worldbook.length}\n`;
+  // 彩蛋团本：结局/成就规则注入（仅当团本数据带 endings/achievements 字段时生效，非彩蛋团本完全不受影响）
+  if((adv.endings?.length) || (adv.achievements?.length)){
+    if(adv.endings?.length){
+      p += `\n### 🏁 结局规则（重要！）\n本团存在多个结局。当玩家的行动达成某个结局的判定条件时，必须在回复末尾【单独一行】宣告：\n达成结局：<结局ID>\n整局只能宣告一个结局，宣告即终局，随后简短描述收尾画面即可。\n结局清单（ID｜判定条件）：\n${adv.endings.map(e=>`- ${e.id}：${e.cond}`).join('\n')}\n`;
+    }
+    if(adv.achievements?.length){
+      p += `\n### 🏅 成就规则（重要！）\n当玩家的表现符合成就条件时，在回复中附带一行：\n由于你在游戏中<表现描述>，获得了<成就ID>成就\n同一成就最多颁发一次，颁发现场要自然、有惊喜感。\n成就清单（ID｜颁发条件）：\n${adv.achievements.map(a=>`- ${a.id}：${a.cond}`).join('\n')}\n`;
+    }
+  }
   return p;
 }
 function partyBlock(){
@@ -5149,8 +5712,14 @@ function partyBlock(){
     const genderTxt = c.gender ? `｜性别 ${c.gender}` : '';
     if(c.system==='dnd5e'){
       const d = dndCalc(c);
-      p += `- ${c.name}（${c.race} ${c.class} Lv${c.level}${c.subclass?'·'+c.subclass:''}）${genderTxt}`;
-      p += `｜HP ${c.hpCur??d.hpMax}/${d.hpMax}｜AC ${d.ac}｜属性 力${c.stats.str} 敏${c.stats.dex} 体${c.stats.con} 智${c.stats.int} 感${c.stats.wis} 魅${c.stats.cha}｜豁免 力${d.saves.str} 敏${d.saves.dex} 体${d.saves.con} 智${d.saves.int} 感${d.saves.wis} 魅${d.saves.cha}｜技能 ${DND_SKILLS.filter(s=>(c.skills||[]).includes(s.n)).map(s=>`${s.n}+${d.skills[s.n]}`).join(' ')}${(c.feats||[]).length?`｜专长 ${(c.feats||[]).join('、')}`:''}${d.spellDC?`｜法术DC ${d.spellDC}｜戏法 ${(c.spells||[]).filter(n=>{const sp=SPELLS.find(x=>x.n===n);return sp&&sp.lv===0;}).length}个｜法术 ${(c.spells||[]).filter(n=>{const sp=SPELLS.find(x=>x.n===n);return sp&&sp.lv>0;}).join('、')}`:''}`;
+      const raceTxt = c.subrace ? `${c.race}（${c.subrace}）` : c.race;
+      p += `- ${c.name}（${raceTxt} ${c.class} Lv${c.level}${c.subclass?'·'+c.subclass:''}${c.class2?'，兼职 '+c.class2:''}）${genderTxt}${c.alignment?'｜阵营 '+c.alignment:''}`;
+      p += `｜HP ${c.hpCur??d.hpMax}/${d.hpMax}｜AC ${d.ac}｜属性 力${c.stats.str} 敏${c.stats.dex} 体${c.stats.con} 智${c.stats.int} 感${c.stats.wis} 魅${c.stats.cha}｜豁免 力${d.saves.str} 敏${d.saves.dex} 体${d.saves.con} 智${d.saves.int} 感${d.saves.wis} 魅${d.saves.cha}｜技能 ${DND_SKILLS.filter(s=>(c.skills||[]).includes(s.n)).map(s=>`${s.n}+${d.skills[s.n]}`).join(' ')}${(c.feats||[]).length?`｜专长 ${(c.feats||[]).join('、')}`:''}`;
+      const profs = c.profs||{};
+      const profTxt = [...(profs.armor||[]), ...(profs.weapons||[]), ...(profs.tools||[])].join('、');
+      if(profTxt) p += `｜熟练 ${profTxt}`;
+      if((c.customSpells||[]).length) p += `｜自定义法术 ${c.customSpells.map(s=>`${s.n}（${LV_CN[s.lv]||s.lv}环：${s.d}）`).join('；')}`;
+      if(d.spellDC) p += `｜法术DC ${d.spellDC}｜法术攻击 +${d.spellAtk}｜戏法 ${(c.spells||[]).filter(n=>{const sp=SPELLS.find(x=>x.n===n);return sp&&sp.lv===0;}).length + (c.customSpells||[]).filter(s=>s.lv===0).length}个｜法术 ${(c.spells||[]).filter(n=>{const sp=SPELLS.find(x=>x.n===n);return sp&&sp.lv>0;}).concat((c.customSpells||[]).filter(s=>s.lv>0).map(s=>s.n)).join('、')}`;
     } else if(c.system==='coc7'){
       const d = cocCalc(c);
       p += `- ${c.name}（${c.class||'调查员'}，年龄${c.age}）${genderTxt}`;
@@ -5246,7 +5815,37 @@ function localGMReply(text, adv){
 function afterAiReply(){
   const adv = curAdv(); if(!adv) return;
   if(adv.type==='galgame'){ checkGalgameEnding(); }
+  checkEasterEggCelebration();   // 彩蛋团本：结局/成就检测与庆祝（无宣告则静默）
   updateSideTabs(); renderQuickActions();
+}
+
+/* ---------------- 彩蛋检测：结局 + 成就（仅带 endings/achievements 的团本） ---------------- */
+function checkEasterEgg(){
+  const endings = [], achievements = [];
+  const adv = curAdv();
+  if(!adv || !S.table) return { endings, achievements };
+  const endingIds = new Set((adv.endings||[]).map(e=>e.id));
+  const achIds = new Set((adv.achievements||[]).map(a=>a.id));
+  if(!endingIds.size && !achIds.size) return { endings, achievements };
+  // 只扫描最近一条 GM 消息（刚回复的那条），避免历史消息误报；AI 偶尔漏写/写错格式也不会影响游戏，检测只是锦上添花
+  const m = S.table.messages[S.table.messages.length-1];
+  if(m && (m.role==='gm' || (m.name||'').includes('GM'))){
+    const c = String(m.content||'');
+    let mm;
+    const reEnd = /达成结局[：:]\s*([A-Za-z0-9_\u4e00-\u9fa5]+)/g;
+    while((mm = reEnd.exec(c))){ if(endingIds.has(mm[1]) && !endings.includes(mm[1])) endings.push(mm[1]); }
+    const reAch = /获得(?:了)?([A-Za-z0-9_\u4e00-\u9fa5]+)成就/g;
+    while((mm = reAch.exec(c))){ if(achIds.has(mm[1]) && !achievements.includes(mm[1])) achievements.push(mm[1]); }
+  }
+  return { endings, achievements };
+}
+function checkEasterEggCelebration(){
+  const egg = checkEasterEgg();
+  if(egg.endings.length){
+    egg.endings.forEach(id=>toast(`🏁 结局达成：${id}！`, 'ok'));
+    Confetti.launch(); playFanfare();   // 结局：彩带 + 胜利音效
+  }
+  egg.achievements.forEach(id=>toast(`🏅 获得成就：${id}！`, 'ok'));
 }
 
 /* ---------------- 侧栏: 小队 / 敌人 / 剧本 / 好感 / 世界书 ---------------- */
@@ -5603,6 +6202,17 @@ function renderQuickActions(){
 }
 
 /* ---------------- 整体渲染 ---------------- */
+/** 团本模式标签：TRPG 不再统一叫"TRPG"，按系统区分 DND / COC / MOD / 自定义 */
+function modeLabel(a){
+  if(a.type==='trpg'){
+    if(String(a.system).startsWith('mod:')) return '🧩 MOD 跑团';
+    if(a.system==='coc7') return '🕯️ COC 跑团';
+    if(a.system==='dnd5e') return '⚔️ DND 跑团';
+    return '📜 自定义跑团';
+  }
+  if(a.type==='script') return '🕵️ 剧本杀';
+  return '💕 文字 Galgame';
+}
 function renderTableAll(){
   const hasTable = !!S.table;
   const setupEl = $('#tableSetup'), panelEl = $('#tablePanel'), tagEl = $('#tableModeTag');
@@ -5612,8 +6222,7 @@ function renderTableAll(){
   if(backBtn) backBtn.classList.toggle('hidden', !hasTable);
   if(tagEl){
     const adv = curAdv();
-    const modelInfo = S.api.key ? ` · 模型 ${esc(S.api.model)}` : '';
-    tagEl.textContent = (adv ? (adv.type==='trpg'?'⚔️ TRPG 跑团':adv.type==='script'?'🕵️ 剧本杀':'💕 文字 Galgame')+' · '+adv.name : '') + modelInfo;
+    tagEl.textContent = adv ? modeLabel(adv) + ' · ' + adv.name : '';
   }
   renderTableSetup();
   renderChat();
@@ -6144,9 +6753,21 @@ function init(){
   // 数据
   S.characters = lsGet('characters',[]);
   S.adventures = lsGet('adventures',[]);
+  // 内置预设同步：localStorage 中若存有旧版预设团本（如简介/结局/成就已更新），一律以最新预设覆盖，
+  // 保证预设团本始终是当前版本（旧存档里的剧透简介、缺失的 endings/achievements 会在此被修正）
+  const presetMap = {};
+  PRESET_ADVENTURES.forEach(a=>{ presetMap[a.id] = a; });
+  let advUpgraded = false;
+  S.adventures = S.adventures.map(a=> presetMap[a.id] ? (advUpgraded = true, JSON.parse(JSON.stringify(presetMap[a.id]))) : a);
+  if(advUpgraded) saveAdvs();
   S.saves = lsGet('saves',[]);
   S.notes = lsGet('notes','');
   S.api = Object.assign({key:'', endpoint:DEFAULT_ENDPOINT, model:DEFAULT_MODEL, temp:0.9}, lsGet('api',{}));
+  // 旧默认模型升级：若仍保存着上一版的默认值 deepseek-chat（说明用户未自定义过模型名），统一升为 deepseek-v4-flash
+  if(S.api.model === 'deepseek-chat'){
+    S.api.model = DEFAULT_MODEL;
+    lsSet('api', S.api);
+  }
   // 迁移旧版（v1）保存的数据与 API 设置
   migrateV1();
   if(!S.api.key){
@@ -6221,17 +6842,30 @@ function bindEvents(){
   $$('[data-wz-next]').forEach(b=>b.onclick = ()=>{ wizRender(parseInt(b.dataset.wzNext)); });
   $$('[data-wz-prev]').forEach(b=>b.onclick = ()=>{ wizRender(parseInt(b.dataset.wzPrev)); });
   $('#btnRollStats').onclick = ()=>{ S.diceMethod='roll4d6'; rollDndStats(); toast('🎲 已按 4d6 去最低 掷出属性','ok'); };
-  $('#btnShuffleStats').onclick = ()=>{ if(S.diceMethod==='roll4d6') rollDndStats(); else { const order=['str','dex','con','int','wis','cha']; const vals=order.map(k=>W.statsBase[k]); vals.sort(()=>Math.random()-.5); order.forEach((k,i)=>W.statsBase[k]=vals[i]); renderDndAttrGrid(); } };
+  $('#btnShuffleStats').onclick = ()=>{
+    // 购点法：随机生成一组合法购点属性（总成本≤27）；标准组：打乱顺序；4d6：重新掷
+    if(S.diceMethod==='pointbuy') rollPointBuyStats();
+    else if(S.diceMethod==='roll4d6') rollDndStats();
+    else { const order=['str','dex','con','int','wis','cha']; const vals=order.map(k=>W.statsBase[k]); vals.sort(()=>Math.random()-.5); order.forEach((k,i)=>W.statsBase[k]=vals[i]); renderDndAttrGrid(); }
+  };
   $$('#attrMethodRow .btn').forEach(b=>{
     b.onclick = ()=>{
       S.diceMethod = b.dataset.method;
-      if(b.dataset.method==='standard'){ const v=[15,14,13,12,10,8]; ['str','dex','con','int','wis','cha'].forEach((k,i)=>W.statsBase[k]=v[i]); renderDndAttrGrid(); toast('📋 已应用标准属性组','ok'); }
-      else if(b.dataset.method==='roll4d6'){ rollDndStats(); }
-      renderDndAttrGrid();
+      if(b.dataset.method==='pointbuy'){
+        // 购点法：每次点击都重新真随机生成一组合法属性（8~15，总成本≤27），购点剩余永不为负
+        rollPointBuyStats();
+        toast('🎯 已切换为购点法（27点）并随机生成属性','ok');
+      }
+      else if(b.dataset.method==='standard'){ applyStandardStats(); }
+      else if(b.dataset.method==='roll4d6'){ rollDndStats(); toast('🎲 已按 4d6 去最低 掷出属性','ok'); }
+      else if(b.dataset.method==='manual'){ renderDndAttrGrid(); toast('✍️ 手动输入模式：可直接修改数值','ok'); }
+      updateMethodBtns();
     };
   });
   $('#btnCocRoll').onclick = ()=>cocRollAll(false);
   $('#btnCocQuick').onclick = ()=>cocRollAll(true);
+  $('#btnCocSimplified').onclick = ()=>cocSimplifiedRoll();
+  $('#btnCocLuck').onclick = ()=>cocLuckRoll();
   $('#btnCocManual').onclick = ()=>{ S.diceMethod='manual'; renderCocAttrGrid(); toast('✍️ 手动模式：直接修改数值','ok'); };
   $('#spellFilter').oninput = ()=>{ renderSpellPool(); };
   $('#btnClearSpellFilter').onclick = ()=>{ $('#spellFilter').value=''; renderSpellPool(); };
@@ -6310,8 +6944,8 @@ function bindEvents(){
   $('#btnSendDice').onclick = ()=>sendDiceToAi(S.table?.lastRoll);
   $('#btnToggleRollLog').onclick = ()=>{ $('#rollLog').classList.toggle('hidden'); };
   bindSideTabs();
-  // 自定义生成
-  $$('#genTabs .tb').forEach(tb=>{ tb.onclick = ()=>{ genTab = tb.dataset.gen; renderGenTemplates(); }; });
+  // 自定义生成（genTabs 由 renderGenTabs 动态渲染并自绑定）
+  renderGenTemplates();
   $('#btnGenSend').onclick = genSend;
   $('#btnGenClear').onclick = genClear;
   $('#btnGenImportAdv').onclick = ()=>genImportAs('adv');
@@ -6407,32 +7041,28 @@ const CLASSIC_MONSTERS = [
    自定义生成：提示词模板 + AI 对话口 + JSON 提取导入
    ========================================================================== */
 const GEN_TEMPLATES = {
-  dnd: { icon:'⚔️', name:'D&D 5E 团本',
+  /* ============ 团本·剧本 ============ */
+  'adv-dnd': { icon:'⚔️', name:'DND 团本',
     sys:`你是 D&D 5E 团本设计器。根据玩家需求输出【一个 D&D 团本对象 JSON】，结构如下：
-{"name":"团本名","type":"trpg","system":"dnd5e","players":建议人数,"emoji":"封面表情","level":"建议等级/强度(如 1~2级)","desc":"一句话简介","intro":"任务简报","scenes":[{"id":"唯一标识","desc":"场景描述（可含检定类型与DC，如：感知(察觉)检定 DC 14）","choices":[{"text":"选项文字","next":"跳转的场景id"}]}],"monsters":[{"name":"怪物名","emoji":"表情","cr":"挑战等级(如 1/4, 1, 3)","ac":护甲,"hp":生命,"attack":"攻击描述(含攻击加值与伤害骰)","skills":"特性"}],"worldbook":[{"kw":"关键词","title":"条目名","text":"设定文本"}]}
+{"name":"团本名","type":"trpg","system":"dnd5e","players":建议人数,"emoji":"封面表情","level":"建议等级/强度(如 1~2级)","desc":"一句话简介(不剧透)","intro":"任务简报","scenes":[{"id":"唯一标识","desc":"场景描述（可含检定类型与DC，如：感知(察觉)检定 DC 14）","choices":[{"text":"选项文字","next":"跳转的场景id"}]}],"monsters":[{"name":"怪物名","emoji":"表情","cr":"挑战等级(如 1/4, 1, 3)","ac":护甲,"hp":生命,"attack":"攻击描述(含攻击加值与伤害骰)","skills":"特性"}],"worldbook":[{"kw":"关键词","title":"条目名","text":"设定文本"}]}
 要求：1. intro 必须是【任务简报】：交代背景、玩家为何在此、初步目标、当前处境，严禁只写一句氛围。2. 3-8个场景、分支合理；3. 怪物 CR 与建议等级匹配（1级团放CR 1/4~1/2的怪，5级团才能碰CR 3+）；4. type 固定为 "trpg"，system 固定为 "dnd5e"。只输出 JSON。`,
     sample:`{"name":"废弃矿洞","type":"trpg","system":"dnd5e","players":3,"emoji":"⛏️","level":"2~3级","desc":"…","intro":"矿主悬赏：矿洞里传出怪声，三组矿工失踪。任务：查明真相、救出矿工。","scenes":[{"id":"start","desc":"…","choices":[{"text":"前进","next":"s1"}]}],"monsters":[{"name":"巨型蜘蛛","emoji":"🕷️","cr":"1","ac":14,"hp":26,"attack":"+5 1d8+3","skills":"织网"}],"worldbook":[{"kw":"矿洞","title":"矿洞传说","text":"…"}]}` },
-  coc: { icon:'🕯️', name:'COC 7th 团本',
+  'adv-coc': { icon:'🕯️', name:'COC 团本',
     sys:`你是 COC 7th（克苏鲁的呼唤）模组设计器。根据玩家需求输出【一个 COC 模组对象 JSON】，结构如下：
-{"name":"模组名","type":"trpg","system":"coc7","players":建议人数,"emoji":"封面表情","level":"适合调查员(如: 新卡/调查员)","desc":"一句话简介","intro":"任务简报","scenes":[{"id":"唯一标识","desc":"场景描述（必须写明需要的技能检定，如：侦查检定、图书馆使用检定，以及理智(SAN)检定与损失如 0/1D3）","choices":[{"text":"选项文字","next":"跳转的场景id"}]}],"monsters":[{"name":"怪物/邪教徒名","emoji":"表情","hp":生命,"attack":"攻击描述(含伤害骰与DB)","skills":"技能值","note":"SAN损失如 0/1D3 或 1/1D6"}],"worldbook":[{"kw":"关键词","title":"条目名","text":"设定文本"}]}
+{"name":"模组名","type":"trpg","system":"coc7","players":建议人数,"emoji":"封面表情","level":"适合调查员(如: 新卡/调查员)","desc":"一句话简介(不剧透)","intro":"任务简报","scenes":[{"id":"唯一标识","desc":"场景描述（必须写明需要的技能检定，如：侦查检定、图书馆使用检定，以及理智(SAN)检定与损失如 0/1D3）","choices":[{"text":"选项文字","next":"跳转的场景id"}]}],"monsters":[{"name":"怪物/邪教徒名","emoji":"表情","hp":生命,"attack":"攻击描述(含伤害骰与DB)","skills":"技能值","note":"SAN损失如 0/1D3 或 1/1D6"}],"worldbook":[{"kw":"关键词","title":"条目名","text":"设定文本"}]}
 要求：1. intro 必须是【任务简报】：背景、调查员为何卷入、初步线索、当前处境。2. 3-8个场景，克苏鲁风格（神秘、不可知、理智侵蚀），重要场景带 SAN 检定；3. 不要写"AC/CR"这类 D&D 术语，COC 用的是技能检定与 d100；4. type 固定为 "trpg"，system 固定为 "coc7"。只输出 JSON。`,
     sample:`{"name":"雾中灯塔","type":"trpg","system":"coc7","players":3,"emoji":"🌫️","level":"新卡调查员","desc":"…","intro":"老莫的信：雾里有东西。任务：查明老莫下落。","scenes":[{"id":"start","desc":"镇口浓雾（侦查检定成功可发现异常脚印）","choices":[{"text":"去灯塔","next":"s1"}]}],"monsters":[{"name":"深潜者（远处）","emoji":"🐸","hp":50,"attack":"爪击 1D6+DB","skills":"游泳90","note":"目击 0/1D3 SAN"}],"worldbook":[{"kw":"深潜者","title":"深潜者","text":"两栖类人生物…"}]}` },
-  script: { icon:'🕵️', name:'剧本杀',
+  'adv-script': { icon:'🕵️', name:'剧本杀',
     sys:`你是剧本杀作者。根据玩家需求输出【一个剧本杀对象 JSON】，结构如下：
 {"name":"剧本名","type":"script","system":"custom","players":人数,"emoji":"表情","desc":"简介","script":{"intro":"主持人开场白（DM引入，交代背景与案发前情）","truth":"真相（只有主持人知道）","roles":[{"name":"角色名","emoji":"表情","public":"公开信息","secret":"秘密（发本时玩家拿到的剧本原文：ta做过什么、动机、时间线）","goal":"目标"}],"clues":[{"id":"编号","phase":出现的阶段(1起),"title":"线索名","text":"线索内容"}],"acts":[{"name":"阶段名","desc":"阶段说明"}]},"worldbook":[{"kw":"关键词","title":"条目名","text":"设定"}]}
-要求：1. 标准流程为：DM引入 → 发本（玩家阅读各自剧本原文）→ 讨论/搜证/质询循环 → 投票 → 真相复盘；acts 数组从"第一幕（讨论开始）"写起，写 2-4 幕即可。2. 3-8个角色，每个角色的 secret 必须写清：ta在案发时做了什么、隐藏的动机/关系、时间线。3. 线索 6-10 条分阶段解锁，真相与所有角色的秘密和动机自洽。只输出 JSON。`,
+要求：1. 标准流程为：DM引入 → 发本（玩家阅读各自剧本原文）→ 讨论/搜证/质询循环 → 投票 → 真相复盘；acts 数组从"第一幕（讨论开始）"写起，写 2-4 幕即可。2. 3-8个角色，每个角色的 secret 必须写清：ta在案发时做了什么、隐藏的动机/关系、时间线。3. 线索 6-10 条分阶段解锁，真相与所有角色的秘密和动机自洽。4. 本网页是单机模式：只有 1 名真人玩家，其余角色由 AI 扮演，因此每个角色的 secret 与 goal 必须足够具体（AI 要靠它们扮演该角色）。只输出 JSON。`,
     sample:`{"name":"雨夜列车","type":"script","system":"custom","players":5,"emoji":"🚂","desc":"…","script":{"intro":"…","truth":"…","roles":[{"name":"列车员","emoji":"🎩","public":"…","secret":"…","goal":"…"}],"clues":[{"id":"c1","phase":1,"title":"…","text":"…"}],"acts":[{"name":"第一幕","desc":"…"}]},"worldbook":[]}` },
-  galgame: { icon:'💕', name:'文字 Galgame',
+  'adv-gal': { icon:'💕', name:'Galgame',
     sys:`你是文字恋爱游戏编剧。根据玩家需求输出【一个 Galgame 对象 JSON】，结构如下：
 {"name":"游戏名","type":"galgame","system":"custom","players":1,"emoji":"表情","desc":"简介","intro":"开场","galgame":{"setting":"世界观","protagonist":{"name":"主角名","emoji":"表情","gender":"性别","desc":"主角设定（外貌/性格/来历）"},"heroines":[{"name":"角色名","emoji":"表情","desc":"人物介绍","likes":"喜好"}],"endings":[{"name":"结局名","cond":"好感度条件 如: 某角色好感≥60 且最高","desc":"结局描述"}]},"worldbook":[{"kw":"关键词","title":"条目名","text":"设定"}]}
 要求：2-4个可攻略角色、3-5个结局（含条件）、世界观 1-2 句；protagonist 是主角设定（可留空则玩家扮演通用"你"）；只输出 JSON。`,
     sample:`{"name":"海风咖啡屋","type":"galgame","system":"custom","players":1,"emoji":"☕","desc":"…","intro":"…","galgame":{"setting":"…","protagonist":{"name":"你","emoji":"🌸","gender":"自定义","desc":"来海边小镇打工的大学生"},"heroines":[{"name":"小海","emoji":"🌊","desc":"…","likes":"…"}],"endings":[{"name":"海的约定","cond":"小海好感≥60 且最高","desc":"…"}]},"worldbook":[]}` },
-  char: { icon:'🧙', name:'角色卡',
-    sys:`你是 TRPG 角色卡设计师。根据玩家需求输出【一个角色卡对象 JSON】，结构如下：
-{"name":"角色名","system":"dnd5e|coc7|custom","gender":"性别(男/女/雄/雌/非二元/自定义)","race":"种族/出身","class":"职业","level":等级,"avatar":"表情","age":"年龄(数字/区间/忘了)","appearance":"外貌描写","bio":"背景故事","stats":{"str":10,"dex":10,"con":10,"int":10,"wis":10,"cha":10},"skills":["擅长技能"],"spells":["法术名"],"weapons":[{"n":"武器名","dice":"伤害骰","prop":"特性"}],"items":"随身物品","pets":"宠物/同伴","personality":"特质","ideal":"理想","bond":"牵绊","flaw":"缺点"}
-dnd5e 时 stats 用 str/dex/con/int/wis/cha；coc7 时用 str/con/siz/dex/app/int/pow/edu；custom 时用任意中文属性名。数值要符合对应规则（DND 购点 8-15；COC 1-99）。appearance 写外貌描写（身高/发色/瞳色/气质等）。bio 背景故事必须写清种族/本质设定（如特殊体质、观测方式、行为准则、繁衍方式等），供 AI 扮演时严格遵循；只输出 JSON。`,
-    sample:`{"name":"白鸦","system":"dnd5e","gender":"女","race":"精灵","class":"游侠","level":3,"avatar":"🏹","bio":"…","stats":{"str":10,"dex":16,"con":13,"int":10,"wis":15,"cha":8},"skills":["察觉","隐匿","生存"],"spells":["纠缠术"],"weapons":[{"n":"长弓","dice":"1d8+3","prop":"远程150/600尺"}],"items":"箭袋、匕首","pets":"猎鹰·小灰"}` },
-  txt: { icon:'📄', name:'TXT 剧本',
+  'adv-txt': { icon:'📄', name:'TXT 剧本',
     sys:`你是剧本写手。根据玩家需求输出【一段纯文本剧本】，必须使用以下格式（网页可直接解析导入）：
 # 名称：剧本名
 简介：一句话
@@ -6444,12 +7074,88 @@ dnd5e 时 stats 用 str/dex/con/int/wis/cha；coc7 时用 str/con/siz/dex/app/in
 （怪物后跟一行的属性：名称/AC/HP/攻击 可用冒号分隔）
 要求：5-10个场景、每个场景 1-3 个选项；第一个场景必须是任务简报（背景+目标+处境），不能直接进入剧情；只输出文本，不要 JSON。`,
     sample:`# 名称：古堡之夜\n简介：暴风雨夜的闹鬼古堡\n## 场景 大门\n你站在古堡大门前，门缝里透出微光。\n- 选择 推门而入\n- 选择 绕到后门\n## 怪物 石像鬼` },
+  /* ============ 角色卡 ============ */
+  'char-dnd': { icon:'⚔️', name:'DND 角色卡',
+    sys:`你是 D&D 5E 角色卡设计师。根据玩家需求输出【一个 D&D 角色卡对象 JSON】，结构如下：
+{"name":"角色名","system":"dnd5e","gender":"男/女/雄/雌/非二元/自定义","race":"种族(白名单内)","subrace":"亚种(种族有亚种时必填)","class":"职业(白名单内)","level":等级,"avatar":"头像(必须1-2个emoji)","alignment":"阵营倾向(九宫格)","age":"年龄","appearance":"外貌描写","bio":"背景故事","stats":{"str":10,"dex":10,"con":10,"int":10,"wis":10,"cha":10},"skills":["技能名(18项内)"],"spells":["法术名(必须来自5E官方法表)"],"customSpells":[{"n":"原创法术名","lv":环位0-9,"d":"作用描述"}],"weapons":[{"n":"武器名","dice":"伤害骰","prop":"特性"}],"items":"随身物品","personality":"特质","ideal":"理想","bond":"牵绊","flaw":"缺点"}
+要求：
+1. avatar 字段必须是 1-2 个 emoji 字符（如 🧙 🏹 🕯️ 🗡️），【禁止】用文字描述头像（如"一位白发老法师"），否则系统无法显示。
+2. race 只能从以下白名单选【一个】，禁止编造种族名，【禁止在名字后加括号注释】（如"木精灵（森林之子）"这种写法会被系统识别成自定义种族）：人类、精灵、矮人、半精灵、半兽人、侏儒、半身人、龙裔、提夫林。
+3. 若种族有亚种，subrace 用以下白名单（同样禁止括号注释）：精灵→高等精灵/木精灵/黑暗精灵（卓尔）；矮人→丘陵矮人/山地矮人；侏儒→森林侏儒/岩石侏儒；半身人→轻足半身人/强壮半身人；龙裔→黑龙/蓝龙/绿龙/红龙/白龙/黄铜龙/青铜龙/赤铜龙/金龙/银龙。
+4. class 只能从以下白名单选【一个】，禁止编造职业名，【禁止括号注释】：战士、法师、游荡者、牧师、德鲁伊、游侠、吟游诗人、武僧、圣武士、野蛮人、术士、邪术师。
+5. spells 数组中的法术名【必须来自 5E 官方法表】，【禁止编造】法表外法术名（例如"猎人之印"是错误的译法，Goodberry 的正确中文名是"浆果术"；遇到不确定的法术一律不写）。可直接参考：魔法飞弹、火球术、护盾术、纠缠术、治疗真言、燃烧之手、睡眠术、魅惑人类、法师护甲、灼热射线、闪电束、火墙术、奥术飞弹。
+6. 若想使用法表外的【原创法术】，必须用 customSpells 字段结构化给出（法术名/环位/作用），网页会生成"自定义法术"；没有把握就留空，让玩家在法表里自己选。
+7. skills 从这 18 项中选：运动、杂技、巧手、隐匿、奥秘、历史、调查、自然、宗教、驯兽、洞察、医药、察觉、生存、欺瞒、威吓、表演、说服。
+8. stats 用购点法范围 8-15（种族/亚种修正会自动叠加）。
+9. alignment 用标准阵营九宫格之一：守序善良/中立善良/混乱善良/守序中立/绝对中立/混乱中立/守序邪恶/中立邪恶/混乱邪恶。
+10. bio 写清背景故事与来历；appearance 写身高/发色/瞳色/气质。只输出 JSON。`,
+    sample:`{"name":"白鸦","system":"dnd5e","gender":"女","race":"精灵","subrace":"木精灵","class":"游侠","level":3,"avatar":"🏹","alignment":"混乱善良","age":"120","bio":"森林守林人的女儿…","appearance":"银发绿瞳，身高168，气质清冷","stats":{"str":10,"dex":16,"con":13,"int":10,"wis":15,"cha":8},"skills":["察觉","隐匿","生存"],"spells":["纠缠术"],"customSpells":[],"weapons":[{"n":"长弓","dice":"1d8+3","prop":"远程150/600尺"}],"items":"箭袋、匕首","personality":"沉默寡言","ideal":"守护自然","bond":"故乡的森林","flaw":"不信任陌生人"}` },
+  'char-coc': { icon:'🕯️', name:'COC 角色卡',
+    sys:`你是 COC 7th（克苏鲁的呼唤）调查员角色卡设计师。根据玩家需求输出【一个 COC 调查员对象 JSON】，结构如下：
+{"name":"角色名","system":"coc7","gender":"男/女/雄/雌/非二元/自定义","class":"职业(官方229职业表内)","age":"年龄","avatar":"头像(必须1-2个emoji)","appearance":"外貌描写","bio":"背景故事","stats":{"str":50,"con":50,"siz":60,"dex":50,"app":50,"int":50,"pow":50,"edu":60},"skills":["技能名(官方技能表内)"],"weapons":[{"n":"武器名","dice":"伤害骰","prop":"特性"}],"items":"随身物品","personality":"特质","ideal":"理想","bond":"牵绊","flaw":"缺点"}
+要求：
+1. avatar 字段必须是 1-2 个 emoji 字符（如 🕯️ 🔍 🎩 📷），【禁止】用文字描述头像。
+2. class 必须来自 COC 官方 229 职业表（如：私家侦探、医生、记者、教授、会计、考古学家、摄影师、图书馆管理员），【禁止编造职业名】，【禁止在名字后加括号注释】；确需自定义职业时直接写职业名（不带括号）。
+3. stats 用官方范围：STR/CON/DEX/APP/POW = 15~90（3d6×5），SIZ/INT/EDU = 40~90（(2d6+6)×5），幸运 15~90。
+4. skills 必须来自官方技能表（禁止编造技能名）：会计学、人类学、估价、考古学、魅惑、攀爬、计算机使用、信用评级、乔装、闪避、汽车驾驶、电气维修、话术、格斗、射击、急救、历史、恐吓、跳跃、语言、法律、图书馆使用、聆听、锁匠、机械维修、医药、博物学、导航、神秘学、操作重型机械、说服、精神分析、心理学、读唇、骑术、科学、侦查、潜行、生存、游泳、投掷、追踪。
+5. bio 写清背景；appearance 写外貌。只输出 JSON。`,
+    sample:`{"name":"阿绫","system":"coc7","gender":"女","class":"记者","age":"28","avatar":"📷","bio":"地方报社的实习记者，嗅觉敏锐","appearance":"短发，常穿风衣，戴记者证","stats":{"str":45,"con":50,"siz":55,"dex":60,"app":65,"int":70,"pow":55,"edu":65},"skills":["侦查","图书馆使用","话术","聆听","摄影"],"weapons":[],"items":"相机、笔记本","personality":"好奇又谨慎","ideal":"真相","bond":"报社的同事","flaw":"容易钻牛角尖"}` },
+  'char-gal': { icon:'💕', name:'Gal 角色卡',
+    sys:`你是文字恋爱游戏角色设计师（自由角色卡：名字 + 简介 + 几条关键属性即可）。根据玩家需求输出【一个角色卡对象 JSON】，结构如下：
+{"name":"角色名","system":"custom","gender":"性别","avatar":"头像(必须1-2个emoji)","bio":"人物设定(外貌/性格/来历，AI扮演时严格遵守)","stats":{"魅力":10,"体力":10},"personality":"特质","items":"随身物品"}
+要求：1. avatar 必须是 1-2 个 emoji 字符，禁止文字描述。2. stats 用 2-5 条中文属性名，数值 1-99。3. bio 写清外貌/性格/来历（供 AI 扮演）。只输出 JSON。`,
+    sample:`{"name":"月见里铃","system":"custom","gender":"女","avatar":"🌸","bio":"天文社社长，傲娇但温柔，喜欢在屋顶看星星","stats":{"魅力":14,"智力":12,"体力":8},"personality":"傲娇","items":"天文望远镜"}` },
 };
-let genTab = 'dnd', genMsgs = [], genBusy = false;
+let genTab = 'adv-dnd', genMsgs = [], genBusy = false;
 S.genLastReply = '';
+/* 生成模板分组：团本·剧本 / 角色卡（MOD 若提供了 genTemplates 模板则动态加入对应分组） */
+const GEN_GROUPS = [
+  { key:'adv', name:'🎲 团本·剧本', tabs:[
+    {id:'adv-dnd', icon:'⚔️', name:'DND 团本'},
+    {id:'adv-coc', icon:'🕯️', name:'COC 团本'},
+    {id:'adv-script', icon:'🕵️', name:'剧本杀'},
+    {id:'adv-gal', icon:'💕', name:'Galgame'},
+    {id:'adv-txt', icon:'📄', name:'TXT 剧本'},
+  ]},
+  { key:'char', name:'🧙 角色卡', tabs:[
+    {id:'char-dnd', icon:'⚔️', name:'DND 角色卡'},
+    {id:'char-coc', icon:'🕯️', name:'COC 角色卡'},
+    {id:'char-gal', icon:'💕', name:'Gal 角色卡'},
+  ]},
+];
+function renderGenTabs(){
+  const box = $('#genTabs'); if(!box) return;
+  let html = '';
+  GEN_GROUPS.forEach(g=>{
+    html += `<span class="tb-group">${g.name}</span>`;
+    g.tabs.forEach(t=>{ html += `<button class="tb ${t.id===genTab?'active':''}" data-gen="${t.id}">${t.icon} ${t.name}</button>`; });
+  });
+  // MOD 模板 tab（安装的 MOD 提供了 genTemplates 时显示）
+  const modHas = kind => S.mods.some(m=>m.data?.genTemplates?.[kind]);
+  if(modHas('adv')) html += `<span class="tb-group">🧩 MOD</span><button class="tb ${genTab==='adv-mod'?'active':''}" data-gen="adv-mod">🧩 MOD 团本</button>`;
+  if(modHas('char')) html += `<button class="tb ${genTab==='char-mod'?'active':''}" data-gen="char-mod">🧩 MOD 角色卡</button>`;
+  box.innerHTML = html;
+  box.querySelectorAll('.tb').forEach(b=>{
+    b.onclick = ()=>{ genTab = b.dataset.gen; renderGenTabs(); renderGenTemplates(); };
+  });
+}
+/** 获取当前 tab 的模板对象（MOD tab 动态拼接各 MOD 提供的模板） */
+function genTemplateOf(id){
+  if(id==='adv-mod' || id==='char-mod'){
+    const kind = id==='adv-mod' ? 'adv' : 'char';
+    const parts = [];
+    S.mods.forEach(m=>{
+      const t = m.data?.genTemplates?.[kind];
+      if(t) parts.push(`【${m.data?.name||m.id}（MOD）】\n${t}`);
+    });
+    if(!parts.length) return {icon:'🧩', name:'MOD 模板', sys:'（尚未安装提供生成模板的 MOD。MOD 可在 data 里加 genTemplates: { adv: "团本提示词", char: "角色卡提示词" }）'};
+    return {icon:'🧩', name:'MOD 模板', sys: parts.join('\n\n')};
+  }
+  return GEN_TEMPLATES[id] || GEN_TEMPLATES['adv-dnd'];
+}
 function renderGenTemplates(){
-  const t = GEN_TEMPLATES[genTab];
-  $$('#genTabs .tb').forEach(b=>b.classList.toggle('active', b.dataset.gen===genTab));
+  renderGenTabs();
+  const t = genTemplateOf(genTab);
   const box = $('#genTemplateBox'); if(!box) return;
   box.innerHTML = `
     <div class="notice info">${t.icon} <b>${t.name}</b>：把下面的提示词发给任意 AI（或用右侧对话口），AI 会输出符合网页导入格式的内容。</div>
@@ -6459,8 +7165,8 @@ function renderGenTemplates(){
         <button class="btn btn-sm btn-primary" id="btnCopyGenPrompt" style="position:absolute;top:8px;right:8px;">📋 复制提示词</button>
       </div>
     </div>
-    <div class="fg"><label>输出格式示例（参考）</label><pre style="background:var(--bg2);border:1px dashed var(--border);border-radius:8px;padding:10px;font-size:11.5px;white-space:pre-wrap;overflow-x:auto;">${esc(t.sample)}</pre></div>
-    <div class="muted small">📄 TXT 格式也可直接保存为 .txt 文件后用「团本·剧本 → 导入 TXT/HTML」导入。</div>`;
+    ${GEN_TEMPLATES[genTab]?`<div class="fg"><label>输出格式示例（参考）</label><pre style="background:var(--bg2);border:1px dashed var(--border);border-radius:8px;padding:10px;font-size:11.5px;white-space:pre-wrap;overflow-x:auto;">${esc(GEN_TEMPLATES[genTab].sample)}</pre></div>`:''}
+    <div class="muted small">💡 团本·剧本 生成结果用「作为团本/剧本导入」；角色卡 生成结果用「作为角色卡导入」。</div>`;
   const btn = box.querySelector('#btnCopyGenPrompt');
   if(btn) btn.onclick = ()=>{
     const ok2 = copyText(t.sys);
@@ -6493,7 +7199,7 @@ async function genSend(){
   ta.value = '';
   genMsgs.push({role:'user', content:text});
   appendGenMsg('你', text);
-  const sys = '你是「万界跑团台」的内容生成器。' + GEN_TEMPLATES[genTab].sys;
+  const sys = '你是「万界跑团台」的内容生成器。' + genTemplateOf(genTab).sys;
   const aiEl = appendGenMsg('AI', '…');
   $('#genStatus').textContent = '⏳ AI 生成中…';
   if(!S.api.key){
@@ -6615,9 +7321,19 @@ const MOD_GUIDE = `<!DOCTYPE html>
             { "name": "格斗", "base": 25 },
             { "name": "法术", "base": 10, "max": 90 }
           ],
-          "skillMax": 90         // 技能上限（可选，默认 99）
+          "skillMax": 90,        // 技能上限（可选，默认 99）
+          "basic": {             // 车卡第1步"基础信息"差异化（可选，默认全开）：
+            "race": false,       //   race=false → 不显示"种族/出身"（纯战斗规则可能完全用不到）
+            "class": true,       //   class/level 同理，按需开关
+            "level": false
+          }
         }
       ],
+      // 自定义生成-生成提示词模板（可选）：本 MOD 在"自定义生成"页提供的模板
+      // "genTemplates": {
+      //   "adv": "（团本·剧本 模板：教 AI 按本 MOD 团本格式输出 JSON）",
+      //   "char": "（角色卡 模板：教 AI 按本 MOD 角色卡格式输出 JSON）"
+      // },
       // 预设团本/剧本（可选）：会直接出现在 团本·剧本 列表
       "adventures": [
         {
@@ -6674,6 +7390,8 @@ function refreshModSystems(){
         id:'mod:'+s.id, modId:m.id, icon:s.icon||'🧩', name:s.name||s.id, desc:s.desc||'',
         attrs:s.attrs||[], derived:s.derived||[], skills:s.skills||[],
         skillMax:s.skillMax!=null?s.skillMax:99,
+        // 基础信息差异化：MOD 可声明哪些字段需要（默认全开）；比如纯战斗规则可能不需要种族/出身
+        basic: Object.assign({race:true, class:true, level:true, avatar:true}, s.basic||{}),
       });
     });
   });
@@ -6745,7 +7463,7 @@ function tryInstallModByName(name){
 }
 
 document.addEventListener('DOMContentLoaded', init);
-window.__tavern = { S, SPELLS, COC_OCCUPATIONS, COC_SKILLS, PRESET_ADVENTURES, CLASSIC_MONSTERS, dndCalc, cocCalc, rollAndSend, parseDice, mdRender, startTable, openWizard, askAI, renderTableAll, saveWizard, saveTableProgress, loadSave, buildSystemPrompt, wizRender, renderLib, renderStyleLab, openPromptEditor, rebuildPromptPreview, applyPromptEditor, importAdventureFile, parseTxtAdventure, streamAI, extractJson, genImportAs, doRoll, sendDiceToAi, startAdventure, renderTableSetup, renderTableChars, updateTableSetupHint, ageToNum, rollAgeInBand, COC_AGE_BANDS, RACE_AGE, installModFromData, uninstallMod, refreshModSystems, occPtsCalc, occPtsDisplay, renderWizPick, cocSetSkillValue, cocRandomRoll, rollAttrExpr, getW: ()=>W };
+window.__tavern = { S, SPELLS, COC_OCCUPATIONS, COC_SKILLS, PRESET_ADVENTURES, CLASSIC_MONSTERS, dndCalc, cocCalc, rollAndSend, parseDice, mdRender, startTable, openWizard, askAI, renderTableAll, saveWizard, saveTableProgress, loadSave, buildSystemPrompt, wizRender, renderLib, renderStyleLab, openPromptEditor, rebuildPromptPreview, applyPromptEditor, importAdventureFile, parseTxtAdventure, streamAI, extractJson, genImportAs, doRoll, sendDiceToAi, startAdventure, renderTableSetup, renderTableChars, updateTableSetupHint, ageToNum, rollAgeInBand, COC_AGE_BANDS, RACE_AGE, DND_RACES, dndRaceMods, installModFromData, uninstallMod, refreshModSystems, occPtsCalc, occPtsDisplay, renderWizPick, cocSetSkillValue, cocRandomRoll, cocRollAll, rollAttrExpr, checkEasterEgg, costOf, rollDndStats, rollPointBuyStats, applyStandardStats, renderAdventureList, renderDndAttrGrid, modeLabel, updateMethodBtns, cocSimplifiedRoll, cocLuckRoll, COC_ATTR_RANGES, GEN_TEMPLATES, genTemplateOf, renderGenTabs, renderGenTemplates, nameHue, updateRaceInfo, renderCustomSpells, renderChosenSpells, getW: ()=>W };
 </script>
 </body>
 </html>
